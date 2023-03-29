@@ -6,17 +6,17 @@ public class Customer {
 	private String firstName;
 	private String secondName;
 	private String firstLastname;
-	private String secondLastName;
+	private String secondLastname;
 	private String identityNumber;
 	private LocalDate dateOfBirth;
 
-	public Customer(String firstName, String secondName, String firstLastname, String secondLastName,
+	public Customer(String firstName, String secondName, String firstLastname, String secondLastname,
 			String identityNumber, LocalDate dateOfBirth) {
 		super();
 		this.firstName = firstName;
 		this.secondName = secondName;
 		this.firstLastname = firstLastname;
-		this.secondLastName = secondLastName;
+		this.secondLastname = secondLastname;
 		this.identityNumber = identityNumber;
 		this.dateOfBirth = dateOfBirth;
 	}
@@ -45,12 +45,12 @@ public class Customer {
 		this.firstLastname = firstLastname;
 	}
 
-	public String getSecondLastName() {
-		return secondLastName;
+	public String getSecondLastname() {
+		return secondLastname;
 	}
 
-	public void setSecondLastName(String secondLastName) {
-		this.secondLastName = secondLastName;
+	public void setSecondLastname(String secondLastName) {
+		this.secondLastname = secondLastName;
 	}
 
 	public String getIdentityNumber() {

@@ -49,7 +49,7 @@ public class CustomerRepository implements IRepository {
 			Customer accountOwner = (Customer) object;
 			String sentenciaSql = "INSERT INTO customers (firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth) "
 					+ " VALUES('" + accountOwner.getFirstName() + "', '" + accountOwner.getSecondName() + "', '"
-					+ accountOwner.getFirstLastname() + "', '" + accountOwner.getSecondLastName() + "', '"
+					+ accountOwner.getFirstLastname() + "', '" + accountOwner.getSecondLastname() + "', '"
 					+ accountOwner.getIdentityNumber() + "','" + accountOwner.getDateOfBirth() + "');";
 			Statement sentencia = connection.createStatement();
 			sentencia.execute(sentenciaSql);
@@ -94,13 +94,60 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public void update(String identityNumber, Object object) {
-		//TODO: other attributes are missing
+	public void update(String identityNumber, Object old, Object modified) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-			Customer cust = (Customer) object;
-			String sqlSentence = "UPDATE customers \n"
-					+ "SET	firstName = '" + cust.getFirstName() +"'\n"
-					+ "WHERE identityNumber = '" + identityNumber + "';";
+			Customer oldCustomer = (Customer) old;
+			Customer modifiedCustomer = (Customer) modified;
+
+			String query = "";
+			if (modifiedCustomer.equals(oldCustomer)) {
+				return;
+			}
+			if (modifiedCustomer.getFirstName() != null
+					&& !modifiedCustomer.getFirstName().equals(oldCustomer.getFirstName())) {
+				query += "firstName = '" + modifiedCustomer.getFirstName() + "',";
+				System.out.println("old firstName " + oldCustomer.getFirstName());
+				System.out.println("new firstName " + modifiedCustomer.getFirstName());
+			}
+
+			if (modifiedCustomer.getSecondName() == null || oldCustomer.getSecondName() == null) {
+				query += "secondName = '" + modifiedCustomer.getSecondName() + "',";
+				System.out.println("old secondName " + oldCustomer.getSecondName());
+				System.out.println("new secondName " + modifiedCustomer.getSecondName());
+			} else if (!(modifiedCustomer.getSecondName() == null || oldCustomer.getSecondName() == null)
+					&& !modifiedCustomer.getSecondName().equals(oldCustomer.getSecondName())) {
+				query += "secondName = '" + modifiedCustomer.getSecondName() + "',";
+				System.out.println("old secondName " + oldCustomer.getSecondName());
+				System.out.println("new secondName " + modifiedCustomer.getSecondName());
+			}
+
+			if (modifiedCustomer.getFirstLastname() != null
+					&& !(modifiedCustomer.getFirstLastname().equals(oldCustomer.getFirstLastname()))) {
+				query += "firstLastname = '" + modifiedCustomer.getFirstLastname() + "',";
+				System.out.println("old firstLastname " + oldCustomer.getFirstLastname());
+				System.out.println("new firstLastname " + modifiedCustomer.getFirstLastname());
+			}
+
+			if (modifiedCustomer.getSecondLastname() == null || oldCustomer.getSecondLastname() == null) {
+				query += "secondLastname = '" + modifiedCustomer.getSecondLastname() + "',";
+				System.out.println("secondLastname");
+			} else if (!modifiedCustomer.getSecondLastname().equals(oldCustomer.getSecondLastname())) {
+				query += "secondLastname = '" + modifiedCustomer.getSecondLastname() + "',";
+				System.out.println("secondLastname");
+			}
+			if (modifiedCustomer.getDateOfBirth() != null
+					&& !modifiedCustomer.getDateOfBirth().equals(oldCustomer.getDateOfBirth())) {
+				query += "dateOfBirth = '" + modifiedCustomer.getDateOfBirth() + "',";
+				System.out.println("dateOfBirth");
+			}
+
+			if (query.length() == 0) {
+				return;
+			}
+			query = query.substring(0, query.length() - 1);
+			System.out.println("query →" + query);
+			String sqlSentence = "UPDATE customers \n" + "SET " + query + "WHERE identityNumber = '" + identityNumber
+					+ "';";
 			Statement sentence = connection.createStatement();
 			sentence.execute(sqlSentence);
 		} catch (SQLException e) {
@@ -143,6 +190,7 @@ public class CustomerRepository implements IRepository {
 						dateOfBirth);
 				return customer;
 			}
+			System.out.println("No Encontró el customer");
 
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);

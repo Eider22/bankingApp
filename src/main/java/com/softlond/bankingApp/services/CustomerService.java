@@ -20,7 +20,7 @@ public class CustomerService {
 		return (List<Customer>) this.customerRepository.list();
 	}
 
-	public Customer find(String identifyNumber) throws Exception {
+	public Customer findByIdentity(String identifyNumber) throws Exception {
 		Object customer = this.customerRepository.find(identifyNumber);
 		if (customer == null) {
 			//TODO: Personal exception
@@ -33,9 +33,10 @@ public class CustomerService {
 		this.customerRepository.delete(identifyNumber);
 	}
 	
-	public Customer update(String identityNumber, Object customer) throws Exception {
-		Customer cust = (Customer)this.find(identityNumber);
-		this.customerRepository.update(identityNumber, customer);
+	public Customer update(String identityNumber, Object modifiedCustomer) throws Exception {
+		Customer oldCustomer = (Customer)this.findByIdentity(identityNumber);
+		System.out.println("old customer form service → " + oldCustomer.getFirstName());
+		this.customerRepository.update(identityNumber, oldCustomer, modifiedCustomer);
 		return null;
 	}
 }

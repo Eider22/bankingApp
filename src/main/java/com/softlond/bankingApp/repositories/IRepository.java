@@ -7,7 +7,7 @@ public interface IRepository {
 
 	public void delete(String identifier);
 
-	public void update(String identifyNumber,Object object);
+	public void update(String identifyNumber,Object oldObject, Object modifiedObject);
 
 	public Object find(String identifier);
 
