@@ -44,13 +44,13 @@ public class App {
 			}
 
 			//Find customer by identityNumber
-//			Customer customerFind = customerService.findByIdentity("1002732542");
+			Customer customerFind = customerService.findByIdentity("10027325422");
 //			System.out.println(customerFind.getFirstName());
 //			System.out.println(customerFind.getDateOfBirth());
 			
 			
 			
-			Customer customer3 = new Customer(null, null, "Cardona", "Castrillón", "1002732542", LocalDate.of(1996, 9, 22));			
+			Customer customer3 = new Customer("Juan", "José", "Martinez", null, "1002732542", LocalDate.of(1996, 9, 22));			
 			customerService.update("1002732542", customer3);
 //			
 //			

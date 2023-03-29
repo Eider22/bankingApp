@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.softlond.bankingApp.entities.Customer;
+import com.softlond.bankingApp.repositories.contracts.ICustomerRepository;
+import com.softlond.bankingApp.repositories.contracts.IRepository;
+import com.softlond.bankingApp.repositories.exceptions.NotFoundCustomerException;
 
 public class CustomerRepository implements IRepository {
 	private String connectionString;
@@ -47,6 +50,11 @@ public class CustomerRepository implements IRepository {
 	public void save(Object object) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			Customer accountOwner = (Customer) object;
+
+			if (accountOwner.getFirstName() == null || accountOwner.getFirstLastname() == null) {
+				return;
+			}
+
 			String sentenciaSql = "INSERT INTO customers (firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth) "
 					+ " VALUES('" + accountOwner.getFirstName() + "', '" + accountOwner.getSecondName() + "', '"
 					+ accountOwner.getFirstLastname() + "', '" + accountOwner.getSecondLastname() + "', '"
@@ -171,12 +179,17 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public Object find(String identifyNumber) {
+	public Object find(String identifyNumber) throws NotFoundCustomerException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "SELECT * FROM customers WHERE identityNumber = ?";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
 			sentence.setString(1, identifyNumber);
 			ResultSet queryResult = sentence.executeQuery();
+			if (queryResult == null || !queryResult.next()) {
+				System.out.println("Entro al lanzamiento de la exception");
+				throw new NotFoundCustomerException("No se encontró el cliente con la identificación indicada");
+			}
+			System.out.println("Pasó lanzamiento de la exception");
 			if (queryResult != null && queryResult.next()) {
 				Customer customer = null;
 				String firstName = queryResult.getString("firstName");
@@ -190,8 +203,6 @@ public class CustomerRepository implements IRepository {
 						dateOfBirth);
 				return customer;
 			}
-			System.out.println("No Encontró el customer");
-
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 		}
