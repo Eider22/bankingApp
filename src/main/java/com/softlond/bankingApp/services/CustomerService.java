@@ -73,15 +73,24 @@ public class CustomerService {
 		Customer newCustomer = (Customer) modifiedCustomer;
 		
 		if (newCustomer.getFirstName() == null || newCustomer.getFirstName() == "") {
-			throw new MissingAtributeException("Faltan Atributos requeridos - primer nombre");
+			newCustomer.setFirstName(oldCustomer.getFirstName());
+		}
+		
+		if (newCustomer.getSecondName() == null || newCustomer.getSecondName() == "") {
+			newCustomer.setSecondName(oldCustomer.getSecondName());
 		}
 		
 		if (newCustomer.getFirstLastname() == null || newCustomer.getFirstLastname() == "") {
-			throw new MissingAtributeException("Faltan Atributos requeridos - primer apellido");
+			newCustomer.setFirstLastname(oldCustomer.getFirstLastname());
+		}
+		
+		if (newCustomer.getSecondLastname() == null || newCustomer.getSecondLastname() == "") {
+			newCustomer.setSecondLastname(oldCustomer.getSecondLastname());
 		}
 		
 		if (newCustomer.getDateOfBirth() == null) {
-			throw new MissingAtributeException("Faltan Atributos requeridos - fecha de nacimiento");
+			newCustomer.setDateOfBirth(oldCustomer.getDateOfBirth());
+			
 		}
 		
 		this.customerRepository.update(identityNumber, oldCustomer, modifiedCustomer);

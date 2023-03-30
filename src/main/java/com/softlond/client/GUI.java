@@ -172,6 +172,7 @@ public class GUI {
 			System.out.println(customerDb.getDateOfBirth());
 			System.out.println("===================================");
 
+			System.out.println("NOTA: Si desea dejar un atributo como estaba solo oprima enter para saltarlo");
 			System.out.println("Primer nombre: ");
 			String firtsName = scanner.nextLine();
 			System.out.println("Segundo nombre: ");
@@ -181,10 +182,17 @@ public class GUI {
 			System.out.println("Segundo apellido: ");
 			String secondLastname = scanner.nextLine();
 			System.out.println("Fecha de nacimiento(AAAA-MM-DD): ");
-			LocalDate dateOfBirth = LocalDate.parse(scanner.nextLine());
+			String dateOfBirth = scanner.nextLine();
 
-			Customer newCustomer = new Customer(firtsName, secondName, firstLastname, secondLastname, identityNumber,
-					dateOfBirth);
+			LocalDate newDateOfBirth = null;
+			if (dateOfBirth == "") {
+				newDateOfBirth = customerDb.getDateOfBirth();
+			}else {
+				newDateOfBirth = LocalDate.parse(dateOfBirth);				
+			}
+			
+			Customer newCustomer = new Customer(firtsName, secondName, firstLastname, secondLastname,
+					identityNumber, newDateOfBirth);
 			customerService.update(identityNumber, newCustomer);
 			System.out.println("→Cliente editado");
 
