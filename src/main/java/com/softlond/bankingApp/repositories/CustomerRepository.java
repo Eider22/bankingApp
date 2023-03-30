@@ -21,7 +21,7 @@ public class CustomerRepository implements IRepository {
 	public CustomerRepository() {
 		try {
 			DriverManager.registerDriver(new org.sqlite.JDBC());
-			this.connectionString = "jdbc:sqlite:pruebas.db";
+			this.connectionString = "jdbc:sqlite:bankingDB.db";
 			createTable();
 		} catch (SQLException e) {
 			System.err.println("Error de conexión con la base de datos: " + e);
@@ -113,46 +113,34 @@ public class CustomerRepository implements IRepository {
 			if (modifiedCustomer.getFirstName() != null
 					&& !modifiedCustomer.getFirstName().equals(oldCustomer.getFirstName())) {
 				query += "firstName = '" + modifiedCustomer.getFirstName() + "',";
-				System.out.println("old firstName " + oldCustomer.getFirstName());
-				System.out.println("new firstName " + modifiedCustomer.getFirstName());
 			}
 
 			if (modifiedCustomer.getSecondName() == null || oldCustomer.getSecondName() == null) {
 				query += "secondName = '" + modifiedCustomer.getSecondName() + "',";
-				System.out.println("old secondName " + oldCustomer.getSecondName());
-				System.out.println("new secondName " + modifiedCustomer.getSecondName());
 			} else if (!(modifiedCustomer.getSecondName() == null || oldCustomer.getSecondName() == null)
 					&& !modifiedCustomer.getSecondName().equals(oldCustomer.getSecondName())) {
 				query += "secondName = '" + modifiedCustomer.getSecondName() + "',";
-				System.out.println("old secondName " + oldCustomer.getSecondName());
-				System.out.println("new secondName " + modifiedCustomer.getSecondName());
 			}
 
 			if (modifiedCustomer.getFirstLastname() != null
 					&& !(modifiedCustomer.getFirstLastname().equals(oldCustomer.getFirstLastname()))) {
 				query += "firstLastname = '" + modifiedCustomer.getFirstLastname() + "',";
-				System.out.println("old firstLastname " + oldCustomer.getFirstLastname());
-				System.out.println("new firstLastname " + modifiedCustomer.getFirstLastname());
 			}
 
 			if (modifiedCustomer.getSecondLastname() == null || oldCustomer.getSecondLastname() == null) {
 				query += "secondLastname = '" + modifiedCustomer.getSecondLastname() + "',";
-				System.out.println("secondLastname");
 			} else if (!modifiedCustomer.getSecondLastname().equals(oldCustomer.getSecondLastname())) {
 				query += "secondLastname = '" + modifiedCustomer.getSecondLastname() + "',";
-				System.out.println("secondLastname");
 			}
 			if (modifiedCustomer.getDateOfBirth() != null
 					&& !modifiedCustomer.getDateOfBirth().equals(oldCustomer.getDateOfBirth())) {
 				query += "dateOfBirth = '" + modifiedCustomer.getDateOfBirth() + "',";
-				System.out.println("dateOfBirth");
 			}
 
 			if (query.length() == 0) {
 				return;
 			}
 			query = query.substring(0, query.length() - 1);
-			System.out.println("query →" + query);
 			String sqlSentence = "UPDATE customers \n" + "SET " + query + "WHERE identityNumber = '" + identityNumber
 					+ "';";
 			Statement sentence = connection.createStatement();
@@ -186,19 +174,18 @@ public class CustomerRepository implements IRepository {
 			ResultSet queryResult = sentence.executeQuery();
 
 			if (queryResult == null || !queryResult.next()) {
-//				throw new NotFoundCustomerException("No se encontró el cliente con la identificación indicada");
 				return null;
 			}
 
 			Customer customer = null;
 			String firstName = queryResult.getString("firstName");
 			String secondName = queryResult.getString("secondName");
-			int firstLastname = queryResult.getInt("firstLastname");
+			String firstLastname = queryResult.getString("firstLastname");
 			String secondLastname = queryResult.getString("secondLastname");
 			String identityNumber = queryResult.getString("identityNumber");
 			LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
 
-			customer = new Customer(firstName, secondName, secondLastname, secondLastname, identityNumber, dateOfBirth);
+			customer = new Customer(firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth);
 			return customer;
 
 		} catch (SQLException e) {

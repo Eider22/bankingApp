@@ -3,6 +3,7 @@ package com.softlond.bankingApp.services;
 import java.util.List;
 
 import com.softlond.bankingApp.entities.Customer;
+import com.softlond.bankingApp.exceptions.MissingAtributeException;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.CustomerRepository;
 
@@ -13,13 +14,16 @@ public class CustomerService {
 		this.customerRepository = new CustomerRepository();
 	}
 
-	public void save(Customer newCustomer) {
+	public void save(Customer newCustomer) throws Exception {
 		if (newCustomer == null) {
-			return;
+			throw new Exception("Error interno en el servidor");
 		}
 
-		if (newCustomer.getFirstName() == null || newCustomer.getFirstLastname() == null) {
-			return;
+		if (newCustomer.getFirstName() == null || newCustomer.getFirstName() == "") {
+			throw new MissingAtributeException("Falta atributo requerido - firstName");
+		}
+		if (newCustomer.getFirstLastname() == null || newCustomer.getFirstLastname() == "") {
+			throw new MissingAtributeException("Falta atributo requerido - firstLastName");
 		}
 
 		this.customerRepository.save(newCustomer);
@@ -55,12 +59,31 @@ public class CustomerService {
 		this.customerRepository.delete(identityNumber);
 	}
 
-	public void update(String identityNumber, Object modifiedCustomer) throws NotFoundCustomerException {
-		if (identityNumber == null || modifiedCustomer == null) {
-			return;
+	public void update(String identityNumber, Object modifiedCustomer)
+			throws NotFoundCustomerException, MissingAtributeException {
+		if (identityNumber == null || identityNumber == "") {
+			throw new MissingAtributeException("Debe ingresar la identificación del cliente que desea editar");
 		}
 
+		if (modifiedCustomer == null) {
+			throw new MissingAtributeException("Debe ingresar los datos para ser modificados en el cliente");
+		}		
+
 		Customer oldCustomer = (Customer) this.findByIdentity(identityNumber);
+		Customer newCustomer = (Customer) modifiedCustomer;
+		
+		if (newCustomer.getFirstName() == null || newCustomer.getFirstName() == "") {
+			throw new MissingAtributeException("Faltan Atributos requeridos - primer nombre");
+		}
+		
+		if (newCustomer.getFirstLastname() == null || newCustomer.getFirstLastname() == "") {
+			throw new MissingAtributeException("Faltan Atributos requeridos - primer apellido");
+		}
+		
+		if (newCustomer.getDateOfBirth() == null) {
+			throw new MissingAtributeException("Faltan Atributos requeridos - fecha de nacimiento");
+		}
+		
 		this.customerRepository.update(identityNumber, oldCustomer, modifiedCustomer);
 	}
 }
