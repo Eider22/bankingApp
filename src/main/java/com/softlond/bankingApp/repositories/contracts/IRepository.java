@@ -5,7 +5,7 @@ import java.util.List;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 
 public interface IRepository {
-	public void save(Object object)throws Exception;
+	public boolean save(Object object)throws Exception;
 
 	public void delete(String identifier)throws Exception;
 

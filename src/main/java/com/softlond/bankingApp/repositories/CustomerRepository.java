@@ -46,12 +46,15 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public void save(Object object) {
+	public boolean save(Object object) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			Customer accountOwner = (Customer) object;
 
-			if (accountOwner.getFirstName() == null || accountOwner.getFirstLastname() == null) {
-				return;
+			if (accountOwner.getFirstName() == null || accountOwner.getFirstName() == ""
+					|| accountOwner.getFirstLastname() == null || accountOwner.getFirstLastname() == ""
+					|| accountOwner.getIdentityNumber() == null || accountOwner.getIdentityNumber() == ""
+					|| accountOwner.getDateOfBirth() == null) {
+				return false;
 			}
 
 			String sentenciaSql = "INSERT INTO customers (firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth) "
@@ -60,11 +63,13 @@ public class CustomerRepository implements IRepository {
 					+ accountOwner.getIdentityNumber() + "','" + accountOwner.getDateOfBirth() + "');";
 			Statement sentencia = connection.createStatement();
 			sentencia.execute(sentenciaSql);
+			return true;
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
 		}
+		return false;
 
 	}
 

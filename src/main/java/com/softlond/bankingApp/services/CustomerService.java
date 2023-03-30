@@ -16,7 +16,7 @@ public class CustomerService {
 
 	public void save(Customer newCustomer) throws Exception {
 		if (newCustomer == null) {
-			throw new Exception("Error interno en el servidor");
+			throw new Exception("No se está enviando un cliente");
 		}
 
 		if (newCustomer.getFirstName() == null || newCustomer.getFirstName() == "") {
@@ -25,8 +25,16 @@ public class CustomerService {
 		if (newCustomer.getFirstLastname() == null || newCustomer.getFirstLastname() == "") {
 			throw new MissingAtributeException("Falta atributo requerido - firstLastName");
 		}
+		
+		if (newCustomer.getIdentityNumber() == null || newCustomer.getIdentityNumber() == "") {
+			throw new MissingAtributeException("Falta atributo requerido - identificación");
+		}
 
-		this.customerRepository.save(newCustomer);
+		boolean createCustomer = this.customerRepository.save(newCustomer);
+		
+		if(!createCustomer) {
+			throw new Exception("No fue posible crear el cliente");
+		}
 	}
 
 	public List<Customer> list() {
