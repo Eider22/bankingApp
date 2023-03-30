@@ -3,8 +3,8 @@ package com.softlond.bankingApp.services;
 import java.util.List;
 
 import com.softlond.bankingApp.entities.Customer;
+import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.CustomerRepository;
-import com.softlond.bankingApp.repositories.exceptions.NotFoundCustomerException;
 
 public class CustomerService {
 	private CustomerRepository customerRepository;
@@ -25,35 +25,42 @@ public class CustomerService {
 		this.customerRepository.save(newCustomer);
 	}
 
-	public List<Customer> listarPersonas() {
+	public List<Customer> list() {
 		return (List<Customer>) this.customerRepository.list();
 	}
 
-	public Customer findByIdentity(String identifyNumber) throws NotFoundCustomerException {
+	public Customer findByIdentity(String identityNumber) throws NotFoundCustomerException {
 
-		if (identifyNumber == null) {
+		if (identityNumber == null) {
 			return null;
 		}
 
-		System.out.println("antes");
-		Object customer = this.customerRepository.find(identifyNumber);
-		System.out.println("despues");
+		Object customer = this.customerRepository.find(identityNumber);
+
 		if (customer == null) {
-			return null;
+			throw new NotFoundCustomerException("No se encontró el cliente con la identificación indicada");
 		}
+
 		return (Customer) customer;
 
 	}
 
-	public void delete(String identifyNumber) {
-		this.customerRepository.delete(identifyNumber);
-	}
+	public void delete(String identityNumber) throws NotFoundCustomerException {
 
-	public void update(String identityNumber, Object modifiedCustomer) throws Exception {
-		Customer oldCustomer = (Customer) this.findByIdentity(identityNumber);
-		if (oldCustomer == null) {
+		if (identityNumber == null) {
 			return;
 		}
+
+		Customer oldCustomer = (Customer) this.findByIdentity(identityNumber);
+		this.customerRepository.delete(identityNumber);
+	}
+
+	public void update(String identityNumber, Object modifiedCustomer) throws NotFoundCustomerException {
+		if (identityNumber == null || modifiedCustomer == null) {
+			return;
+		}
+
+		Customer oldCustomer = (Customer) this.findByIdentity(identityNumber);
 		this.customerRepository.update(identityNumber, oldCustomer, modifiedCustomer);
 	}
 }

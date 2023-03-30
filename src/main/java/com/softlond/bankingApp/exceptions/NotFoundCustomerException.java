@@ -1,4 +1,4 @@
-package com.softlond.bankingApp.repositories.exceptions;
+package com.softlond.bankingApp.exceptions;
 
 public class NotFoundCustomerException extends Exception {
 

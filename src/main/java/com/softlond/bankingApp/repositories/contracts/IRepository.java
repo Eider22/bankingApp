@@ -2,8 +2,7 @@ package com.softlond.bankingApp.repositories.contracts;
 
 import java.util.List;
 
-import com.softlond.bankingApp.repositories.exceptions.RepositoryException;
-import com.softlond.bankingApp.repositories.exceptions.NotFoundCustomerException;
+import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 
 public interface IRepository {
 	public void save(Object object)throws Exception;

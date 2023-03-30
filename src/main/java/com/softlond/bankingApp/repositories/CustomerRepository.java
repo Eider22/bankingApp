@@ -12,9 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.softlond.bankingApp.entities.Customer;
-import com.softlond.bankingApp.repositories.contracts.ICustomerRepository;
+import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.contracts.IRepository;
-import com.softlond.bankingApp.repositories.exceptions.NotFoundCustomerException;
 
 public class CustomerRepository implements IRepository {
 	private String connectionString;
@@ -179,30 +178,29 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public Object find(String identifyNumber) throws NotFoundCustomerException {
+	public Object find(String identifyNumber) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "SELECT * FROM customers WHERE identityNumber = ?";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
 			sentence.setString(1, identifyNumber);
 			ResultSet queryResult = sentence.executeQuery();
-			if (queryResult == null || !queryResult.next()) {
-				System.out.println("Entro al lanzamiento de la exception");
-				throw new NotFoundCustomerException("No se encontró el cliente con la identificación indicada");
-			}
-			System.out.println("Pasó lanzamiento de la exception");
-			if (queryResult != null && queryResult.next()) {
-				Customer customer = null;
-				String firstName = queryResult.getString("firstName");
-				String secondName = queryResult.getString("secondName");
-				int firstLastname = queryResult.getInt("firstLastname");
-				String secondLastname = queryResult.getString("secondLastname");
-				String identityNumber = queryResult.getString("identityNumber");
-				LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
 
-				customer = new Customer(firstName, secondName, secondLastname, secondLastname, identityNumber,
-						dateOfBirth);
-				return customer;
+			if (queryResult == null || !queryResult.next()) {
+//				throw new NotFoundCustomerException("No se encontró el cliente con la identificación indicada");
+				return null;
 			}
+
+			Customer customer = null;
+			String firstName = queryResult.getString("firstName");
+			String secondName = queryResult.getString("secondName");
+			int firstLastname = queryResult.getInt("firstLastname");
+			String secondLastname = queryResult.getString("secondLastname");
+			String identityNumber = queryResult.getString("identityNumber");
+			LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
+
+			customer = new Customer(firstName, secondName, secondLastname, secondLastname, identityNumber, dateOfBirth);
+			return customer;
+
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 		}
