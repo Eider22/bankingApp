@@ -1,17 +1,16 @@
-package com.softlond.bankingApp.entities;
+package com.softlond.bankingApp.dtos;
 
-public class CurrentAccount {
+import com.softlond.bankingApp.entities.Customer;
+
+public class AccountDto {
 	private String accountNumber;
 	private double balance;
 	private Customer owner;
-	private Customer withdrawalsQuantity;
 
-	public CurrentAccount(String accountNumber, double balance, Customer owner, Customer withdrawalsQuantity) {
-		super();
+	public AccountDto(String accountNumber, double balance, Customer owner) {
 		this.accountNumber = accountNumber;
 		this.balance = balance;
 		this.owner = owner;
-		this.withdrawalsQuantity = withdrawalsQuantity;
 	}
 
 	public String getAccountNumber() {
@@ -36,14 +35,6 @@ public class CurrentAccount {
 
 	public void setOwner(Customer owner) {
 		this.owner = owner;
-	}
-
-	public Customer getWithdrawalsQuantity() {
-		return withdrawalsQuantity;
-	}
-
-	public void setWithdrawalsQuantity(Customer withdrawalsQuantity) {
-		this.withdrawalsQuantity = withdrawalsQuantity;
 	}
 
 }
