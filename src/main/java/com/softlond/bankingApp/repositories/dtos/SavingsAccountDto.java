@@ -1,4 +1,4 @@
-package com.softlond.bankingApp.dtos;
+package com.softlond.bankingApp.repositories.dtos;
 
 import com.softlond.bankingApp.entities.Customer;
 
@@ -9,6 +9,13 @@ public class SavingsAccountDto extends AccountDto {
 	public SavingsAccountDto(String accountNumber, double balance, Customer owner, Customer withdrawalsQuantity,
 			Customer depositsQuantity) {
 		super(accountNumber, balance, owner);
+		this.withdrawalsQuantity = withdrawalsQuantity;
+		this.depositsQuantity = depositsQuantity;
+	}
+
+	public SavingsAccountDto(String id, String accountNumber, double balance, Customer owner,
+			Customer withdrawalsQuantity, Customer depositsQuantity) {
+		super(id, accountNumber, balance, owner);
 		this.withdrawalsQuantity = withdrawalsQuantity;
 		this.depositsQuantity = depositsQuantity;
 	}

@@ -14,7 +14,7 @@ public class CustomerService {
 		this.customerRepository = new CustomerRepository();
 	}
 
-	public void save(Customer newCustomer) throws Exception {
+	public Customer save(Customer newCustomer) throws Exception {
 		if (newCustomer == null) {
 			throw new Exception("No se está enviando un cliente");
 		}
@@ -30,11 +30,12 @@ public class CustomerService {
 			throw new MissingAtributeException("Falta atributo requerido - identificación");
 		}
 
-		boolean createCustomer = this.customerRepository.save(newCustomer);
+		Customer createdCustomer = this.customerRepository.save(newCustomer);
 		
-		if(!createCustomer) {
+		if(createdCustomer == null) {
 			throw new Exception("No fue posible crear el cliente");
 		}
+		return createdCustomer;
 	}
 
 	public List<Customer> list() {
@@ -57,14 +58,18 @@ public class CustomerService {
 
 	}
 
-	public void delete(String identityNumber) throws NotFoundCustomerException {
+	public boolean delete(String identityNumber) throws NotFoundCustomerException {
 
 		if (identityNumber == null) {
-			return;
+			return false;
 		}
 
 		Customer oldCustomer = (Customer) this.findByIdentity(identityNumber);
-		this.customerRepository.delete(identityNumber);
+		boolean ok = this.customerRepository.delete(identityNumber);
+		if(!ok) {
+			return false;
+		}
+		return true;
 	}
 
 	public void update(String identityNumber, Object modifiedCustomer)

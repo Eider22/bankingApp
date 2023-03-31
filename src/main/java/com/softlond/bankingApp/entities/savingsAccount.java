@@ -1,6 +1,7 @@
 package com.softlond.bankingApp.entities;
 
 public class SavingsAccount {
+	private String id;
 	private String accountNumber;
 	private double balance;
 	private Customer owner;
@@ -15,6 +16,12 @@ public class SavingsAccount {
 		this.owner = owner;
 		this.withdrawalsQuantity = withdrawalsQuantity;
 		this.depositsQuantity = depositsQuantity;
+	}
+
+	public SavingsAccount(String id, String accountNumber, double balance, Customer owner, Customer withdrawalsQuantity,
+			Customer depositsQuantity) {
+		this(accountNumber, balance, owner, withdrawalsQuantity, depositsQuantity);
+		this.id = id;
 	}
 
 	public String getAccountNumber() {

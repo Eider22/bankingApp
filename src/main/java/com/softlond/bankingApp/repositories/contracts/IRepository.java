@@ -2,12 +2,13 @@ package com.softlond.bankingApp.repositories.contracts;
 
 import java.util.List;
 
+import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 
 public interface IRepository {
-	public boolean save(Object object)throws Exception;
+	public Customer save(Object object)throws Exception;
 
-	public void delete(String identifier)throws Exception;
+	public boolean delete(String identifier)throws Exception;
 
 	public void update(String identifyNumber, Object oldObject, Object modifiedObject) throws Exception;
 

@@ -46,7 +46,7 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public boolean save(Object object) {
+	public Customer save(Object object) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			Customer accountOwner = (Customer) object;
 
@@ -54,7 +54,7 @@ public class CustomerRepository implements IRepository {
 					|| accountOwner.getFirstLastname() == null || accountOwner.getFirstLastname() == ""
 					|| accountOwner.getIdentityNumber() == null || accountOwner.getIdentityNumber() == ""
 					|| accountOwner.getDateOfBirth() == null) {
-				return false;
+				return null;
 			}
 
 			String sentenciaSql = "INSERT INTO customers (firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth) "
@@ -63,13 +63,13 @@ public class CustomerRepository implements IRepository {
 					+ accountOwner.getIdentityNumber() + "','" + accountOwner.getDateOfBirth() + "');";
 			Statement sentencia = connection.createStatement();
 			sentencia.execute(sentenciaSql);
-			return true;
+			return accountOwner;
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
 		}
-		return false;
+		return null;
 
 	}
 
@@ -85,6 +85,7 @@ public class CustomerRepository implements IRepository {
 			if (queryResult != null) {
 				while (queryResult.next()) {
 					Customer costumer = null;
+					String id = queryResult.getString("id");
 					String firstName = queryResult.getString("firstName");
 					String secondName = queryResult.getString("secondName");
 					String firstLastname = queryResult.getString("firstLastname");
@@ -92,7 +93,7 @@ public class CustomerRepository implements IRepository {
 					String identityNumber = queryResult.getString("identityNumber");
 					LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
 
-					costumer = new Customer(firstName, secondName, firstLastname, secondLastname, identityNumber,
+					costumer = new Customer(id,firstName, secondName, firstLastname, secondLastname, identityNumber,
 							dateOfBirth);
 					costumers.add(costumer);
 				}
@@ -158,16 +159,18 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public void delete(String identityNumber) {
+	public boolean delete(String identityNumber) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "DELETE FROM customers WHERE identityNumber = '" + identityNumber + "';";
 			Statement sentence = connection.createStatement();
 			sentence.execute(sqlSentence);
+			return true;
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
 		}
+		return false;
 	}
 
 	@Override
@@ -183,6 +186,7 @@ public class CustomerRepository implements IRepository {
 			}
 
 			Customer customer = null;
+			String id = queryResult.getString("id");
 			String firstName = queryResult.getString("firstName");
 			String secondName = queryResult.getString("secondName");
 			String firstLastname = queryResult.getString("firstLastname");
@@ -190,7 +194,7 @@ public class CustomerRepository implements IRepository {
 			String identityNumber = queryResult.getString("identityNumber");
 			LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
 
-			customer = new Customer(firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth);
+			customer = new Customer(id, firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth);
 			return customer;
 
 		} catch (SQLException e) {

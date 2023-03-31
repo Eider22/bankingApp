@@ -3,6 +3,7 @@ package com.softlond.bankingApp.entities;
 import java.time.LocalDate;
 
 public class Customer {
+	private String id;
 	private String firstName;
 	private String secondName;
 	private String firstLastname;
@@ -19,6 +20,21 @@ public class Customer {
 		this.secondLastname = secondLastname;
 		this.identityNumber = identityNumber;
 		this.dateOfBirth = dateOfBirth;
+	}
+
+	public Customer(String id, String firstName, String secondName, String firstLastname, String secondLastname,
+			String identityNumber, LocalDate dateOfBirth) {
+		this(firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth);
+		this.id = id;
+	}
+
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {

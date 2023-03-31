@@ -91,16 +91,19 @@ public class GUI {
 
 			Customer customer = new Customer(firtsName, secondName, firstLastname, secondLastname, identityNumber,
 					dateOfBirth);
-			customerService.save(customer);
+			Customer createdCustomer = customerService.save(customer);
+			if(createdCustomer == null) {
+				throw new Exception("No fue posible crear el cliente");
+			}
 			System.out.println("===================================");
 			System.out.println("Cliente creado");
 			System.out.println("===================================");
-			System.out.println(customer.getFirstName());
-			System.out.println(customer.getSecondName());
-			System.out.println(customer.getFirstLastname());
-			System.out.println(customer.getSecondLastname());
-			System.out.println(customer.getIdentityNumber());
-			System.out.println(customer.getDateOfBirth());
+			System.out.println(createdCustomer.getFirstName());
+			System.out.println(createdCustomer.getSecondName());
+			System.out.println(createdCustomer.getFirstLastname());
+			System.out.println(createdCustomer.getSecondLastname());
+			System.out.println(createdCustomer.getIdentityNumber());
+			System.out.println(createdCustomer.getDateOfBirth());
 			System.out.println("===================================");
 
 		} catch (DateTimeParseException e) {
@@ -116,6 +119,7 @@ public class GUI {
 		System.out.println("Listando clientes");
 		for (Customer customerDb : customersDb) {
 			System.out.println("===================================");
+			System.out.println(customerDb.getId());
 			System.out.println(customerDb.getFirstName());
 			System.out.println(customerDb.getSecondName());
 			System.out.println(customerDb.getFirstLastname());
@@ -135,6 +139,7 @@ public class GUI {
 		System.out.println("===================================");
 		System.out.println("Cliente encontrado");
 		System.out.println("===================================");
+		System.out.println(customerDb.getId());
 		System.out.println(customerDb.getFirstName());
 		System.out.println(customerDb.getSecondName());
 		System.out.println(customerDb.getFirstLastname());
@@ -144,12 +149,14 @@ public class GUI {
 		System.out.println("===================================");
 	}
 
-	private void delete() throws NotFoundCustomerException {
+	private void delete() throws Exception {
 		System.out.println("Eliminar cliente");
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Identificacion: ");
 		String identificacion = scanner.nextLine();
-		customerService.delete(identificacion);
+		if(!customerService.delete(identificacion)) {
+			throw new Exception("Falló la eliminación del cliente");
+		};
 		System.out.println("Cliente eliminado");
 
 	}

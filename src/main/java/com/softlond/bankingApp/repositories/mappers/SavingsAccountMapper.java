@@ -3,8 +3,8 @@ package com.softlond.bankingApp.repositories.mappers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.softlond.bankingApp.dtos.SavingsAccountDto;
 import com.softlond.bankingApp.entities.SavingsAccount;
+import com.softlond.bankingApp.repositories.dtos.SavingsAccountDto;
 
 public class SavingsAccountMapper extends MapperBase<SavingsAccountDto, SavingsAccount> {
 

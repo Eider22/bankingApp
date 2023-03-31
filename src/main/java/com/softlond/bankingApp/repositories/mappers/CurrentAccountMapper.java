@@ -3,9 +3,8 @@ package com.softlond.bankingApp.repositories.mappers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.softlond.bankingApp.dtos.CurrentAccountDto;
-import com.softlond.bankingApp.dtos.CurrentAccountDto;
 import com.softlond.bankingApp.entities.CurrentAccount;
+import com.softlond.bankingApp.repositories.dtos.CurrentAccountDto;
 import com.softlond.bankingApp.entities.CurrentAccount;
 
 public class CurrentAccountMapper extends MapperBase<CurrentAccountDto, CurrentAccount> {

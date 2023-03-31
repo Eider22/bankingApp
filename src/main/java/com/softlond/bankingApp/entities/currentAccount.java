@@ -1,6 +1,8 @@
 package com.softlond.bankingApp.entities;
 
 public class CurrentAccount {
+
+	private String id;
 	private String accountNumber;
 	private double balance;
 	private Customer owner;
@@ -12,6 +14,12 @@ public class CurrentAccount {
 		this.balance = balance;
 		this.owner = owner;
 		this.withdrawalsQuantity = withdrawalsQuantity;
+	}
+
+	public CurrentAccount(String id, String accountNumber, double balance, Customer owner,
+			Customer withdrawalsQuantity) {
+		this(accountNumber, balance, owner, withdrawalsQuantity);
+		this.id = id;
 	}
 
 	public String getAccountNumber() {
