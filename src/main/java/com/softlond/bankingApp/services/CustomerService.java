@@ -72,7 +72,7 @@ public class CustomerService {
 		return true;
 	}
 
-	public void update(String identityNumber, Object modifiedCustomer)
+	public Customer update(String identityNumber, Object modifiedCustomer)
 			throws NotFoundCustomerException, MissingAtributeException {
 		if (identityNumber == null || identityNumber == "") {
 			throw new MissingAtributeException("Debe ingresar la identificación del cliente que desea editar");
@@ -106,6 +106,11 @@ public class CustomerService {
 			
 		}
 		
-		this.customerRepository.update(identityNumber, oldCustomer, modifiedCustomer);
+		boolean ok = this.customerRepository.update(identityNumber, oldCustomer, modifiedCustomer);
+		if(!ok) {
+			return null;
+		}
+		
+		return this.findByIdentity(identityNumber);
 	}
 }

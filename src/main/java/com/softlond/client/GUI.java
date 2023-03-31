@@ -93,7 +93,7 @@ public class GUI {
 					dateOfBirth);
 			Customer createdCustomer = customerService.save(customer);
 			if(createdCustomer == null) {
-				throw new Exception("No fue posible crear el cliente");
+				throw new Exception("Falló la creación del cliente");
 			}
 			System.out.println("===================================");
 			System.out.println("Cliente creado");
@@ -200,8 +200,20 @@ public class GUI {
 			
 			Customer newCustomer = new Customer(firtsName, secondName, firstLastname, secondLastname,
 					identityNumber, newDateOfBirth);
-			customerService.update(identityNumber, newCustomer);
-			System.out.println("→Cliente editado");
+			Customer updatedCustomer = customerService.update(identityNumber, newCustomer);
+			if(updatedCustomer == null) {
+				throw new Exception("Falló la edición del cliente");
+			}
+			System.out.println("===================================");
+			System.out.println("Cliente editado");
+			System.out.println("===================================");
+			System.out.println(updatedCustomer.getFirstName());
+			System.out.println(updatedCustomer.getSecondName());
+			System.out.println(updatedCustomer.getFirstLastname());
+			System.out.println(updatedCustomer.getSecondLastname());
+			System.out.println(updatedCustomer.getIdentityNumber());
+			System.out.println(updatedCustomer.getDateOfBirth());
+			System.out.println("===================================");
 
 		} catch (DateTimeParseException e) {
 			throw new Exception("Formato invalido para fecha");

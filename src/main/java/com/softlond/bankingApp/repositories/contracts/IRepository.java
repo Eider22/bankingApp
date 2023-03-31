@@ -10,7 +10,7 @@ public interface IRepository {
 
 	public boolean delete(String identifier)throws Exception;
 
-	public void update(String identifyNumber, Object oldObject, Object modifiedObject) throws Exception;
+	public boolean update(String identifyNumber, Object oldObject, Object modifiedObject) throws Exception;
 
 	public Object find(String identifier) throws Exception;
 

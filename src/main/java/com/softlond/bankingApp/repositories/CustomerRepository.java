@@ -107,14 +107,14 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public void update(String identityNumber, Object old, Object modified) {
+	public boolean update(String identityNumber, Object old, Object modified) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			Customer oldCustomer = (Customer) old;
 			Customer modifiedCustomer = (Customer) modified;
 
 			String query = "";
 			if (modifiedCustomer.equals(oldCustomer)) {
-				return;
+				return false;
 			}
 			if (modifiedCustomer.getFirstName() != null
 					&& !modifiedCustomer.getFirstName().equals(oldCustomer.getFirstName())) {
@@ -144,18 +144,20 @@ public class CustomerRepository implements IRepository {
 			}
 
 			if (query.length() == 0) {
-				return;
+				return false;
 			}
 			query = query.substring(0, query.length() - 1);
 			String sqlSentence = "UPDATE customers \n" + "SET " + query + "WHERE identityNumber = '" + identityNumber
 					+ "';";
 			Statement sentence = connection.createStatement();
 			sentence.execute(sqlSentence);
+			return true;
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
 		}
+		return false;
 	}
 
 	@Override
