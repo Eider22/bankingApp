@@ -1,28 +1,43 @@
 package com.softlond.bankingApp.services;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.softlond.bankingApp.controllers.dtos.CustomerControllerDto;
+import com.softlond.bankingApp.controllers.mappers.CustomerControllerMapper;
 import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.MissingAtributeException;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.CustomerRepository;
 import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
-import com.softlond.bankingApp.repositories.mappers.CustomerMapper;
+import com.softlond.bankingApp.repositories.mappers.CustomerRepositoryMapper;
 
 public class CustomerService {
 	private CustomerRepository customerRepository;
+	private CustomerRepositoryMapper customerRepositoryMapper;
+	private CustomerControllerMapper customerControllerMapper;
 
 	public CustomerService() {
 		this.customerRepository = new CustomerRepository();
+		this.customerRepositoryMapper = new CustomerRepositoryMapper();
+		this.customerControllerMapper = new CustomerControllerMapper();
 	}
 
 	// TODO: Pasar un Map en lugar de un costumer para validar la estructura sin
 	// usar DTOS
-	public CustomerRepositoryDto save(Map customerMap) throws DateTimeParseException, MissingAtributeException, Exception {
+	public CustomerControllerDto save(Map customerMap)
+			throws DateTimeParseException, MissingAtributeException, Exception {
 
 		try {
 			String firstName = (String) customerMap.get("firstName");
@@ -47,35 +62,33 @@ public class CustomerService {
 				throw new MissingAtributeException("Falta atributo requerido - fecha de nacimiento");
 			}
 
-			CustomerRepositoryDto newCustomer = new CustomerRepositoryDto(firstName, secondName, firstLastname, secondLastname, identityNumber,
-					dateOfBirth);
+			CustomerRepositoryDto newCustomer = new CustomerRepositoryDto(firstName, secondName, firstLastname,
+					secondLastname, identityNumber, dateOfBirth);
 
 			Customer customer = this.customerRepository.save(newCustomer);
 
 			if (customer == null) {
 				throw new Exception("No fue posible crear el cliente");
 			}
-			
-			CustomerMapper customerMapper = new CustomerMapper();
-			return customerMapper.mapperT2T1WithoutId(customer);			
-			
+
+			return this.customerControllerMapper.mapperT2T1(this.customerRepositoryMapper.mapperT2T1(customer));
+
 		} catch (DateTimeParseException e) {
 			throw new Exception("Formato invalido para fecha");
 		}
 
 	}
 
-	public List<CustomerRepositoryDto> list() {
-		if(this.customerRepository.list() == null) {
-			
-		};
-		List<Customer> customers = (ArrayList<Customer>)this.customerRepository.list();
-		
-		CustomerMapper customerMapper = new CustomerMapper();
-		return customerMapper.MapperT2T1(customers);
+	public List<CustomerControllerDto> list() {
+		if (this.customerRepository.list() == null) {
+
+		}
+
+		List<Customer> customers = this.customerRepository.list();
+		return this.customerControllerMapper.MapperT2T1(this.customerRepositoryMapper.MapperT2T1(customers));
 	}
 
-	//TODO: MAPPER
+	// TODO: MAPPER
 	public Customer findByIdentity(String identityNumber) throws NotFoundCustomerException {
 
 		if (identityNumber == null) {
@@ -90,26 +103,24 @@ public class CustomerService {
 
 		return (Customer) customer;
 
-	}	
-	
+	}
+
 	public CustomerRepositoryDto findById(String id) throws NotFoundCustomerException {
-		
+
 		if (id == null) {
 			return null;
 		}
-		
+
 		Customer customer = (Customer) this.customerRepository.findById(id);
-		
+
 		if (customer == null) {
 			throw new NotFoundCustomerException("No se encontró el cliente con el id indicado");
 		}
-		
-		CustomerMapper customerMapper = new CustomerMapper();
-		
-		return customerMapper.mapperT2T1(customer);		
+
+		return this.customerRepositoryMapper.mapperT2T1(customer);
 	}
 
-	//TODO: MAPPER
+	// TODO: MAPPER
 	public boolean delete(String identityNumber) throws NotFoundCustomerException {
 
 		if (identityNumber == null) {
@@ -124,7 +135,7 @@ public class CustomerService {
 		return true;
 	}
 
-	//TODO: MAPPER
+	// TODO: MAPPER
 	public Customer update(String identityNumber, Object modifiedCustomer)
 			throws NotFoundCustomerException, MissingAtributeException {
 		if (identityNumber == null || identityNumber == "") {

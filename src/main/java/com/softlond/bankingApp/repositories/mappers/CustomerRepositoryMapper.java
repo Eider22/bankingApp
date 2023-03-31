@@ -7,7 +7,7 @@ import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
 import com.softlond.bankingApp.entities.Customer;
 
-public class CustomerMapper extends MapperBase<CustomerRepositoryDto, Customer> {
+public class CustomerRepositoryMapper extends MapperRepositroyBase<CustomerRepositoryDto, Customer> {
 	@Override
 	public Customer mapperT1T2(CustomerRepositoryDto input) {
 		Customer customer = new Customer(input.getId(), input.getFirstName(), input.getSecondName(),

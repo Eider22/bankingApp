@@ -6,7 +6,7 @@ import java.util.List;
 import com.softlond.bankingApp.entities.SavingsAccount;
 import com.softlond.bankingApp.repositories.dtos.SavingsAccountRepositoryDto;
 
-public class SavingsAccountMapper extends MapperBase<SavingsAccountRepositoryDto, SavingsAccount> {
+public class SavingsAccountMapper extends MapperRepositroyBase<SavingsAccountRepositoryDto, SavingsAccount> {
 
 	@Override
 	public SavingsAccount mapperT1T2(SavingsAccountRepositoryDto input) {

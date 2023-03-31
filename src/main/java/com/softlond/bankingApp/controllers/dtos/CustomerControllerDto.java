@@ -1,18 +1,18 @@
-package com.softlond.bankingApp.repositories.dtos;
+package com.softlond.bankingApp.controllers.dtos;
 
 import java.time.LocalDate;
 
-public class CustomerRepositoryDto {
+public class CustomerControllerDto {
 	private String id;
 	private String firstName;
 	private String secondName;
 	private String firstLastname;
 	private String secondLastname;
 	private String identityNumber;
-	private LocalDate dateOfBirth;
+	private String dateOfBirth;
 
-	public CustomerRepositoryDto(String firstName, String secondName, String firstLastname, String secondLastname,
-			String identityNumber, LocalDate dateOfBirth) {
+	public CustomerControllerDto(String firstName, String secondName, String firstLastname, String secondLastname,
+			String identityNumber, String dateOfBirth) {
 		super();
 		this.firstName = firstName;
 		this.secondName = secondName;
@@ -21,9 +21,9 @@ public class CustomerRepositoryDto {
 		this.identityNumber = identityNumber;
 		this.dateOfBirth = dateOfBirth;
 	}
-	
-	public CustomerRepositoryDto(String id, String firstName, String secondName, String firstLastname,
-			String secondLastname, String identityNumber, LocalDate dateOfBirth) {
+
+	public CustomerControllerDto(String id, String firstName, String secondName, String firstLastname,
+			String secondLastname, String identityNumber, String dateOfBirth) {
 		this(firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth);
 		this.id = id;
 	}
@@ -76,11 +76,11 @@ public class CustomerRepositoryDto {
 		this.identityNumber = identityNumber;
 	}
 
-	public LocalDate getDateOfBirth() {
+	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(LocalDate dateOfBirth) {
+	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 

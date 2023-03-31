@@ -15,7 +15,7 @@ import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.contracts.IRepository;
 import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
-import com.softlond.bankingApp.repositories.mappers.CustomerMapper;
+import com.softlond.bankingApp.repositories.mappers.CustomerRepositoryMapper;
 
 public class CustomerRepository implements IRepository {
 	private String connectionString;
@@ -49,7 +49,7 @@ public class CustomerRepository implements IRepository {
 
 	@Override
 	public Customer save(Object object) {
-		CustomerMapper customerMapper = new CustomerMapper();
+		CustomerRepositoryMapper customerMapper = new CustomerRepositoryMapper();
 		Customer accountOwner = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) object);
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
@@ -77,7 +77,7 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public List<?> list() {
+	public List<Customer> list() {
 		List<Customer> customers = new ArrayList<Customer>();
 
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {

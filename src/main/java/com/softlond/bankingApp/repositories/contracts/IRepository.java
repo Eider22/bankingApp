@@ -6,7 +6,7 @@ import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 
 public interface IRepository {
-	public Customer save(Object object)throws Exception;
+	public Object save(Object object)throws Exception;
 
 	public boolean delete(String identifier)throws Exception;
 

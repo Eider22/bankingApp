@@ -7,7 +7,7 @@ import com.softlond.bankingApp.entities.CurrentAccount;
 import com.softlond.bankingApp.repositories.dtos.CurrentAccountRepositoryDto;
 import com.softlond.bankingApp.entities.CurrentAccount;
 
-public class CurrentAccountMapper extends MapperBase<CurrentAccountRepositoryDto, CurrentAccount> {
+public class CurrentAccountMapper extends MapperRepositroyBase<CurrentAccountRepositoryDto, CurrentAccount> {
 	@Override
 	public CurrentAccount mapperT1T2(CurrentAccountRepositoryDto input) {
 		CurrentAccount currentAccount = new CurrentAccount(input.getAccountNumber(), input.getBalance(),
