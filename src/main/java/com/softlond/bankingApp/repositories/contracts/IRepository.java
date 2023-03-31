@@ -15,4 +15,6 @@ public interface IRepository {
 	public Object find(String identifier) throws Exception;
 
 	public List<?> list() throws Exception;
+	
+	public Object findById(String id) throws Exception;
 }

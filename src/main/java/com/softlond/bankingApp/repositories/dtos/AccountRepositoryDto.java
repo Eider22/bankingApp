@@ -2,19 +2,19 @@ package com.softlond.bankingApp.repositories.dtos;
 
 import com.softlond.bankingApp.entities.Customer;
 
-public class AccountDto {
+public class AccountRepositoryDto {
 	private String id;
 	private String accountNumber;
 	private double balance;
 	private Customer owner;
 
-	public AccountDto( String accountNumber, double balance, Customer owner) {
+	public AccountRepositoryDto( String accountNumber, double balance, Customer owner) {
 		this.accountNumber = accountNumber;
 		this.balance = balance;
 		this.owner = owner;
 	}
 	
-	public AccountDto(String id, String accountNumber, double balance, Customer owner) {
+	public AccountRepositoryDto(String id, String accountNumber, double balance, Customer owner) {
 		this(accountNumber, balance, owner);
 		this.id = id;
 	}

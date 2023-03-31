@@ -14,6 +14,8 @@ import java.util.List;
 import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.contracts.IRepository;
+import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
+import com.softlond.bankingApp.repositories.mappers.CustomerMapper;
 
 public class CustomerRepository implements IRepository {
 	private String connectionString;
@@ -47,8 +49,9 @@ public class CustomerRepository implements IRepository {
 
 	@Override
 	public Customer save(Object object) {
+		CustomerMapper customerMapper = new CustomerMapper();
+		Customer accountOwner = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) object);
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-			Customer accountOwner = (Customer) object;
 
 			if (accountOwner.getFirstName() == null || accountOwner.getFirstName() == ""
 					|| accountOwner.getFirstLastname() == null || accountOwner.getFirstLastname() == ""
@@ -75,7 +78,7 @@ public class CustomerRepository implements IRepository {
 
 	@Override
 	public List<?> list() {
-		List<Customer> costumers = new ArrayList<Customer>();
+		List<Customer> customers = new ArrayList<Customer>();
 
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "SELECT * FROM customers";
@@ -84,7 +87,7 @@ public class CustomerRepository implements IRepository {
 
 			if (queryResult != null) {
 				while (queryResult.next()) {
-					Customer costumer = null;
+					Customer customer = null;
 					String id = queryResult.getString("id");
 					String firstName = queryResult.getString("firstName");
 					String secondName = queryResult.getString("secondName");
@@ -93,11 +96,11 @@ public class CustomerRepository implements IRepository {
 					String identityNumber = queryResult.getString("identityNumber");
 					LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
 
-					costumer = new Customer(id,firstName, secondName, firstLastname, secondLastname, identityNumber,
+					customer = new Customer(id, firstName, secondName, firstLastname, secondLastname, identityNumber,
 							dateOfBirth);
-					costumers.add(costumer);
+					customers.add(customer);
 				}
-				return costumers;
+				return customers;
 			}
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
@@ -196,7 +199,39 @@ public class CustomerRepository implements IRepository {
 			String identityNumber = queryResult.getString("identityNumber");
 			LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
 
-			customer = new Customer(id, firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth);
+			customer = new Customer(id, firstName, secondName, firstLastname, secondLastname, identityNumber,
+					dateOfBirth);
+			return customer;
+
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+		}
+		return null;
+	}
+
+	@Override
+	public Object findById(String id) {
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+			String sqlSentence = "SELECT * FROM customers WHERE id = ?";
+			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
+			sentence.setString(1, id);
+			ResultSet queryResult = sentence.executeQuery();
+
+			if (queryResult == null || !queryResult.next()) {
+				return null;
+			}
+
+			Customer customer = null;
+			String ID = queryResult.getString("id");
+			String firstName = queryResult.getString("firstName");
+			String secondName = queryResult.getString("secondName");
+			String firstLastname = queryResult.getString("firstLastname");
+			String secondLastname = queryResult.getString("secondLastname");
+			String identityNumber = queryResult.getString("identityNumber");
+			LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
+
+			customer = new Customer(ID, firstName, secondName, firstLastname, secondLastname, identityNumber,
+					dateOfBirth);
 			return customer;
 
 		} catch (SQLException e) {
