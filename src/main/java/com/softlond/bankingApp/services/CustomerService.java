@@ -116,8 +116,8 @@ public class CustomerService {
 
 	public boolean delete(String id) throws NotFoundCustomerException {
 
-		if (id == null) {
-			return false;
+		if (id == null  || id == "") {
+			throw new NotFoundCustomerException("Debe enviar el id del cliente que desea eliminar");
 		}
 
 		CustomerControllerDto customer = this.findById(id);
