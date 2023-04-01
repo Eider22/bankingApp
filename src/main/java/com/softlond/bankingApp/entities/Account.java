@@ -1,32 +1,22 @@
-package com.softlond.bankingApp.repositories.dtos;
+package com.softlond.bankingApp.entities;
 
-import com.softlond.bankingApp.entities.Customer;
-
-public class AccountRepositoryDto {
+public class Account {
 	private String id;
 	private String accountNumber;
 	private double balance;
-	private String customerId;
 	private String accountType;
+	private String customerId;
 
-	public AccountRepositoryDto(String accountNumber, double balance, String customerId, String accountType) {
+	public Account(String accountNumber, double balance, String customerId, String accountType) {
+		super();
 		this.accountNumber = accountNumber;
 		this.balance = balance;
 		this.customerId = customerId;
 		this.accountType = accountType;
 	}
 
-	public AccountRepositoryDto(String id, String accountNumber, double balance, String customerId,
-			String accountType) {
-		this(accountNumber, balance, customerId, accountType);
-		this.id = id;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
+	public Account(String id, String accountNumber, double balance, String customer, String accountType) {
+		this(accountNumber, balance, customer, accountType);
 		this.id = id;
 	}
 
@@ -50,8 +40,16 @@ public class AccountRepositoryDto {
 		return customerId;
 	}
 
-	public void setCustomer(String customerId) {
-		this.customerId = customerId;
+	public void setCustomer(String customer) {
+		this.customerId = customer;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getAccountType() {
@@ -61,5 +59,6 @@ public class AccountRepositoryDto {
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
 	}
-
+	
+	
 }
