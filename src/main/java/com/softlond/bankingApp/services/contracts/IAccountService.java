@@ -10,9 +10,9 @@ public interface IAccountService {
 
 	public List<AccountControllerDto> list() throws Exception;
 	
-	public List<AccountControllerDto> listByIdCustomer() throws Exception;
+	public List<AccountControllerDto> listByCustomerId() throws Exception;
 
-	public AccountControllerDto findByIdentity(String identityNumber) throws Exception;
+	public List<AccountControllerDto> listByCustomerId(Integer customerId) throws Exception;
 
 	public AccountControllerDto findById(String id) throws Exception;
 

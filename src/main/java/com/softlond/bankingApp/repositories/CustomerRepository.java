@@ -24,6 +24,7 @@ public class CustomerRepository implements ICustomerRepository {
 		try {
 			DriverManager.registerDriver(new org.sqlite.JDBC());
 			this.connectionString = "jdbc:sqlite:bankingDB.db";
+
 			createTable();
 		} catch (SQLException e) {
 			System.err.println("Error de conexión con la base de datos: " + e);
@@ -33,7 +34,7 @@ public class CustomerRepository implements ICustomerRepository {
 
 	private void createTable() {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-
+			
 			String sql = "CREATE TABLE IF NOT EXISTS customers (\n" + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ " firstName TEXT NOT NULL,\n" + " secondName TEXT NULL,\n" + " firstLastname TEXT NOT NULL,\n"
 					+ " identityNumber TEXT NOT NULL UNIQUE,\n" + " secondLastname TEXT NULL,\n"
@@ -62,12 +63,12 @@ public class CustomerRepository implements ICustomerRepository {
 				return null;
 			}
 
-			String sentenciaSql = "INSERT INTO customers (firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth) "
+			String sentenceSql = "INSERT INTO customers (firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth) "
 					+ " VALUES('" + newCustomer.getFirstName() + "', '" + newCustomer.getSecondName() + "', '"
 					+ newCustomer.getFirstLastname() + "', '" + newCustomer.getSecondLastname() + "', '"
 					+ newCustomer.getIdentityNumber() + "','" + newCustomer.getDateOfBirth() + "');";
-			Statement sentencia = connection.createStatement();
-			sentencia.execute(sentenciaSql);
+			Statement sentence = connection.createStatement();
+			sentence.execute(sentenceSql);
 			return this.findByIdentity(newCustomer.getIdentityNumber());
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
@@ -117,7 +118,7 @@ public class CustomerRepository implements ICustomerRepository {
 	}
 
 	@Override
-	public Customer update(String id, CustomerRepositoryDto old, CustomerRepositoryDto modified) throws SQLException {
+	public Customer update(Integer id, CustomerRepositoryDto old, CustomerRepositoryDto modified) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
 			CustomerRepositoryMapper customerMapper = new CustomerRepositoryMapper();
@@ -174,7 +175,7 @@ public class CustomerRepository implements ICustomerRepository {
 	}
 
 	@Override
-	public boolean delete(String id) {
+	public boolean delete(Integer id) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "DELETE FROM customers WHERE id = '" + id + "';";
 			Statement sentence = connection.createStatement();
@@ -186,14 +187,14 @@ public class CustomerRepository implements ICustomerRepository {
 			System.err.println("Error " + e.getMessage());
 		}
 		return false;
-	}	
+	}
 
 	@Override
-	public Customer findById(String id) throws SQLException {
+	public Customer findById(Integer id) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "SELECT * FROM customers WHERE id = ?";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
-			sentence.setString(1, id);
+			sentence.setInt(1, id);
 			ResultSet queryResult = sentence.executeQuery();
 
 			if (queryResult == null || !queryResult.next()) {
@@ -216,12 +217,12 @@ public class CustomerRepository implements ICustomerRepository {
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println("Error de conexión: " + e);
 			throw e;
 		}
 	}
-	
+
 	@Override
 	public Customer findByIdentity(String identifyNumber) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {

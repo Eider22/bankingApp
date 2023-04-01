@@ -101,9 +101,10 @@ public class CustomerService implements ICustomerService{
 
 	}
 
-	public CustomerControllerDto findById(String id) throws Exception {
+	@Override
+	public CustomerControllerDto findById(Integer id) throws Exception {
 
-		if (id == null  || id == "") {
+		if (id == null) {
 			throw new NotFoundCustomerException("Debe enviar el id del cliente que desea obtener");
 		}
 
@@ -116,9 +117,9 @@ public class CustomerService implements ICustomerService{
 		return this.customerControllerMapper.mapperT2T1(this.customerRepositoryMapper.mapperT2T1(customer));
 	}
 
-	public boolean delete(String id) throws Exception {
+	public boolean delete(Integer id) throws Exception {
 
-		if (id == null  || id == "") {
+		if (id == null) {
 			throw new NotFoundCustomerException("Debe enviar el id del cliente que desea eliminar");
 		}
 
@@ -135,9 +136,9 @@ public class CustomerService implements ICustomerService{
 		return true;
 	}
 
-	public CustomerControllerDto update(String id, Map customerMap) throws Exception {
+	public CustomerControllerDto update(Integer id, Map customerMap) throws Exception {
 
-		if (id == null || id == "") {
+		if (id == null) {
 			throw new MissingAtributeException("Debe ingresar la identificación del cliente que desea editar");
 		}
 

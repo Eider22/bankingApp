@@ -5,9 +5,9 @@ public class Account {
 	private String accountNumber;
 	private double balance;
 	private String accountType;
-	private String customerId;
+	private Integer customerId;
 
-	public Account(String accountNumber, double balance, String customerId, String accountType) {
+	public Account(String accountNumber, double balance, Integer customerId, String accountType) {
 		super();
 		this.accountNumber = accountNumber;
 		this.balance = balance;
@@ -15,7 +15,7 @@ public class Account {
 		this.accountType = accountType;
 	}
 
-	public Account(String id, String accountNumber, double balance, String customer, String accountType) {
+	public Account(String id, String accountNumber, double balance, Integer customer, String accountType) {
 		this(accountNumber, balance, customer, accountType);
 		this.id = id;
 	}
@@ -36,11 +36,11 @@ public class Account {
 		this.balance = balance;
 	}
 
-	public String getCustomer() {
+	public Integer getCustomer() {
 		return customerId;
 	}
 
-	public void setCustomer(String customer) {
+	public void setCustomer(Integer customer) {
 		this.customerId = customer;
 	}
 

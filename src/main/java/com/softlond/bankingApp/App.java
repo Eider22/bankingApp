@@ -4,6 +4,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
+import com.softlond.bankingApp.controllers.AccountController;
 import com.softlond.bankingApp.controllers.CustomerController;
 //import com.softlond.client.GUI;
 
@@ -22,6 +23,7 @@ public class App {
 
 	        context.setContextPath("/");
 	        context.addServlet(CustomerController.class, "/customer/*");
+	        context.addServlet(AccountController.class, "/account/*");
 
 	        server.setHandler(context);
 

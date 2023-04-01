@@ -12,9 +12,9 @@ public interface ICustomerService {
 
 	public CustomerControllerDto findByIdentity(String identityNumber) throws Exception;
 
-	public CustomerControllerDto findById(String id) throws Exception;
+	public CustomerControllerDto findById(Integer id) throws Exception;
 
-	public boolean delete(String id) throws Exception;
+	public boolean delete(Integer id) throws Exception;
 
-	public CustomerControllerDto update(String id, Map customerMap) throws Exception;
+	public CustomerControllerDto update(Integer id, Map customerMap) throws Exception;
 }

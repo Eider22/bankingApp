@@ -18,7 +18,7 @@ public class AccountControllerMapper extends MapperControllerBase<AccountControl
 	@Override
 	public AccountControllerDto mapperT2T1(AccountRepositoryDto input) {
 		AccountControllerDto accountDto = new AccountControllerDto(input.getId(), input.getAccountNumber(),
-				input.getBalance(), input.getCustomer(), input.getAccountType());
+				input.getBalance(), input.getAccountType(), input.getCustomer());
 		return accountDto;
 	}
 
@@ -54,7 +54,7 @@ public class AccountControllerMapper extends MapperControllerBase<AccountControl
 
 	public AccountControllerDto mapperT2T1WithoutId(AccountRepositoryDto input) {
 		AccountControllerDto accountDto = new AccountControllerDto(input.getAccountNumber(), input.getBalance(),
-				input.getCustomer(), input.getAccountType());
+				input.getAccountType(), input.getCustomer());
 		return accountDto;
 	}
 

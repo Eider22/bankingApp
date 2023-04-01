@@ -46,7 +46,7 @@ public class CustomerController extends HttpServlet {
 		} else {
 			switch (path) {
 			case "/findById":
-				String id = request.getParameter("id");
+				Integer id = Integer.parseInt(request.getParameter("id"));
 				try {
 					CustomerControllerDto customer = customerService.findById(id);
 					String json = mapper.writeValueAsString(customer);
@@ -130,7 +130,7 @@ public class CustomerController extends HttpServlet {
 		String content = request.getContentType();
 		if (content == "application/json") {
 			Map<String, Object> customerMap = mapper.readValue(request.getInputStream(), HashMap.class);
-			String id = request.getParameter("id");
+			Integer id = Integer.parseInt(request.getParameter("id"));
 
 			try {
 				CustomerControllerDto updatedCustomer = customerService.update(id, customerMap);
@@ -162,7 +162,7 @@ public class CustomerController extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String id = request.getParameter("id");
+		Integer id = Integer.parseInt(request.getParameter("id"));
 		response.setContentType("application/json");
 		try {
 			boolean ok = customerService.delete(id);

@@ -5,10 +5,10 @@ public class AccountControllerDto {
 	private String accountNumber;
 	private double balance;
 	private String accountType;
-	private String  customerId;
+	private Integer customerId;
 
 	public AccountControllerDto(String accountNumber, double balance, String accountType,
-			String customerId) {
+			Integer customerId) {
 		super();
 		this.accountNumber = accountNumber;
 		this.balance = balance;
@@ -17,7 +17,7 @@ public class AccountControllerDto {
 	}
 
 	public AccountControllerDto(String id, String accountNumber, double balance, String accountType,
-			String customerId) {
+			Integer customerId) {
 		this(accountNumber, balance, accountType, customerId);
 		this.id = id;
 	}
@@ -61,11 +61,11 @@ public class AccountControllerDto {
 		this.accountType = accountType;
 	}
 
-	public String getCustomer() {
+	public Integer getCustomer() {
 		return customerId;
 	}
 
-	public void setCustomer(String customerId) {
+	public void setCustomer(Integer customerId) {
 		this.customerId = customerId;
 	}
 

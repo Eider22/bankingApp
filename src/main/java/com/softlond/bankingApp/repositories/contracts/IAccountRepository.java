@@ -13,7 +13,7 @@ public interface IAccountRepository {
 
 	public List<Account> list() throws Exception;
 	
-	public List<Account> listByIdCustomer() throws Exception;
+	public List<Account> listByCustomerId(Integer customerId) throws Exception;
 	
 	public Account findById(String id) throws Exception;
 	

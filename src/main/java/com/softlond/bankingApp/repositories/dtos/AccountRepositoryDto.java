@@ -6,17 +6,17 @@ public class AccountRepositoryDto {
 	private String id;
 	private String accountNumber;
 	private double balance;
-	private String customerId;
+	private Integer customerId;
 	private String accountType;
 
-	public AccountRepositoryDto(String accountNumber, double balance, String customerId, String accountType) {
+	public AccountRepositoryDto(String accountNumber, double balance, Integer customerId, String accountType) {
 		this.accountNumber = accountNumber;
 		this.balance = balance;
 		this.customerId = customerId;
 		this.accountType = accountType;
 	}
 
-	public AccountRepositoryDto(String id, String accountNumber, double balance, String customerId,
+	public AccountRepositoryDto(String id, String accountNumber, double balance, Integer customerId,
 			String accountType) {
 		this(accountNumber, balance, customerId, accountType);
 		this.id = id;
@@ -46,11 +46,11 @@ public class AccountRepositoryDto {
 		this.balance = balance;
 	}
 
-	public String getCustomer() {
+	public Integer getCustomer() {
 		return customerId;
 	}
 
-	public void setCustomer(String customerId) {
+	public void setCustomer(Integer customerId) {
 		this.customerId = customerId;
 	}
 
