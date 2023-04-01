@@ -48,27 +48,30 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public Customer save(Object object) {
+	public Customer save(Object object) throws SQLException {
 		CustomerRepositoryMapper customerMapper = new CustomerRepositoryMapper();
-		Customer accountOwner = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) object);
+		
+		Customer newCustomer = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) object);
+		
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
-			if (accountOwner.getFirstName() == null || accountOwner.getFirstName() == ""
-					|| accountOwner.getFirstLastname() == null || accountOwner.getFirstLastname() == ""
-					|| accountOwner.getIdentityNumber() == null || accountOwner.getIdentityNumber() == ""
-					|| accountOwner.getDateOfBirth() == null) {
+			if (newCustomer.getFirstName() == null || newCustomer.getFirstName() == ""
+					|| newCustomer.getFirstLastname() == null || newCustomer.getFirstLastname() == ""
+					|| newCustomer.getIdentityNumber() == null || newCustomer.getIdentityNumber() == ""
+					|| newCustomer.getDateOfBirth() == null) {
 				return null;
 			}
 
 			String sentenciaSql = "INSERT INTO customers (firstName, secondName, firstLastname, secondLastname, identityNumber, dateOfBirth) "
-					+ " VALUES('" + accountOwner.getFirstName() + "', '" + accountOwner.getSecondName() + "', '"
-					+ accountOwner.getFirstLastname() + "', '" + accountOwner.getSecondLastname() + "', '"
-					+ accountOwner.getIdentityNumber() + "','" + accountOwner.getDateOfBirth() + "');";
+					+ " VALUES('" + newCustomer.getFirstName() + "', '" + newCustomer.getSecondName() + "', '"
+					+ newCustomer.getFirstLastname() + "', '" + newCustomer.getSecondLastname() + "', '"
+					+ newCustomer.getIdentityNumber() + "','" + newCustomer.getDateOfBirth() + "');";
 			Statement sentencia = connection.createStatement();
 			sentencia.execute(sentenciaSql);
-			return accountOwner;
+			return this.find(newCustomer.getIdentityNumber());
 		} catch (SQLException e) {
-			System.err.println("Error de conexión: " + e);
+//			System.err.println("Error de conexión: " + e);
+			throw e;
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
 		}
@@ -110,14 +113,17 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public boolean update(String identityNumber, Object old, Object modified) {
+	public Customer update(String id, Object old, Object modified) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-			Customer oldCustomer = (Customer) old;
-			Customer modifiedCustomer = (Customer) modified;
-
+			
+			CustomerRepositoryMapper customerMapper = new CustomerRepositoryMapper();
+			
+			Customer oldCustomer = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) old);
+			Customer modifiedCustomer = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) modified);
+			
 			String query = "";
 			if (modifiedCustomer.equals(oldCustomer)) {
-				return false;
+				return null;
 			}
 			if (modifiedCustomer.getFirstName() != null
 					&& !modifiedCustomer.getFirstName().equals(oldCustomer.getFirstName())) {
@@ -147,26 +153,26 @@ public class CustomerRepository implements IRepository {
 			}
 
 			if (query.length() == 0) {
-				return false;
+				return null;
 			}
 			query = query.substring(0, query.length() - 1);
-			String sqlSentence = "UPDATE customers \n" + "SET " + query + "WHERE identityNumber = '" + identityNumber
+			String sqlSentence = "UPDATE customers \n" + "SET " + query + "WHERE id = '" + id
 					+ "';";
 			Statement sentence = connection.createStatement();
 			sentence.execute(sqlSentence);
-			return true;
+			return  this.findById(id);
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
 		}
-		return false;
+		return null;
 	}
 
 	@Override
-	public boolean delete(String identityNumber) {
+	public boolean delete(String id) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-			String sqlSentence = "DELETE FROM customers WHERE identityNumber = '" + identityNumber + "';";
+			String sqlSentence = "DELETE FROM customers WHERE id = '" + id + "';";
 			Statement sentence = connection.createStatement();
 			sentence.execute(sqlSentence);
 			return true;
@@ -179,7 +185,7 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public Object find(String identifyNumber) {
+	public Customer find(String identifyNumber) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "SELECT * FROM customers WHERE identityNumber = ?";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
@@ -210,7 +216,7 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public Object findById(String id) {
+	public Customer findById(String id) {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "SELECT * FROM customers WHERE id = ?";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
