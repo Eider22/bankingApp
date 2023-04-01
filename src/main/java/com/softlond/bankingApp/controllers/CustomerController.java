@@ -12,12 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softlond.bankingApp.controllers.dtos.CustomerControllerDto;
-import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
 import com.softlond.bankingApp.services.CustomerService;
+import com.softlond.bankingApp.services.contracts.ICustomerService;
 
 public class CustomerController extends HttpServlet {
 
-	private CustomerService customerService;
+	private ICustomerService customerService;
 	private ObjectMapper mapper;
 
 	public CustomerController() {
@@ -30,10 +30,19 @@ public class CustomerController extends HttpServlet {
 			throws ServletException, IOException {
 		String path = request.getPathInfo();
 		if (path == null) {
-			List<?> customers = customerService.list();
-			String json = mapper.writeValueAsString(customers);
-			response.setContentType("application/json");
-			response.getWriter().println(json);
+			try {
+				List<?> customers = customerService.list();
+				String json = mapper.writeValueAsString(customers);
+				response.setContentType("application/json");
+				response.getWriter().println(json);
+			} catch (Exception e) {
+				response.setStatus(404);
+				Map<String, String> error = new HashMap<>();
+				error.put("error", e.getMessage());
+				String json = mapper.writeValueAsString(error);
+				response.setContentType("application/json");
+				response.getWriter().println(json);
+			}
 		} else {
 			switch (path) {
 			case "/findById":

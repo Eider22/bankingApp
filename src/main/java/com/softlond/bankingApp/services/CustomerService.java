@@ -12,11 +12,13 @@ import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.MissingAtributeException;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.CustomerRepository;
+import com.softlond.bankingApp.repositories.contracts.ICustomerRepository;
 import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
 import com.softlond.bankingApp.repositories.mappers.CustomerRepositoryMapper;
+import com.softlond.bankingApp.services.contracts.ICustomerService;
 
-public class CustomerService {
-	private CustomerRepository customerRepository;
+public class CustomerService implements ICustomerService{
+	private ICustomerRepository customerRepository;
 	private CustomerRepositoryMapper customerRepositoryMapper;
 	private CustomerControllerMapper customerControllerMapper;
 
@@ -74,7 +76,7 @@ public class CustomerService {
 
 	}
 
-	public List<CustomerControllerDto> list() {
+	public List<CustomerControllerDto> list() throws Exception {
 		if (this.customerRepository.list() == null) {
 
 		}
@@ -83,13 +85,13 @@ public class CustomerService {
 		return this.customerControllerMapper.MapperT2T1(this.customerRepositoryMapper.MapperT2T1(customers));
 	}
 
-	public CustomerControllerDto findByIdentity(String identityNumber) throws NotFoundCustomerException {
+	public CustomerControllerDto findByIdentity(String identityNumber) throws Exception {
 
 		if (identityNumber == null  || identityNumber == "") {
 			throw new NotFoundCustomerException("Debe enviar la identificaión del cliente que desea obtener");
 		}
 
-		Customer customer = this.customerRepository.find(identityNumber);
+		Customer customer = this.customerRepository.findByIdentity(identityNumber);
 
 		if (customer == null) {
 			throw new NotFoundCustomerException("No se encontró el cliente con la identificación indicada");
@@ -99,7 +101,7 @@ public class CustomerService {
 
 	}
 
-	public CustomerControllerDto findById(String id) throws NotFoundCustomerException {
+	public CustomerControllerDto findById(String id) throws Exception {
 
 		if (id == null  || id == "") {
 			throw new NotFoundCustomerException("Debe enviar el id del cliente que desea obtener");
@@ -114,7 +116,7 @@ public class CustomerService {
 		return this.customerControllerMapper.mapperT2T1(this.customerRepositoryMapper.mapperT2T1(customer));
 	}
 
-	public boolean delete(String id) throws NotFoundCustomerException {
+	public boolean delete(String id) throws Exception {
 
 		if (id == null  || id == "") {
 			throw new NotFoundCustomerException("Debe enviar el id del cliente que desea eliminar");
@@ -174,7 +176,7 @@ public class CustomerService {
 
 		Customer updateCustomer = this.customerRepository.update(id, oldCostumer, newCustomer);
 		if (updateCustomer == null) {
-			throw new Exception("No fue posible editar el cliente");
+			throw new Exception("No editó ningún campo para el cliente");
 		}
 
 		return this.customerControllerMapper.mapperT2T1(this.customerRepositoryMapper.mapperT2T1(updateCustomer));

@@ -13,11 +13,11 @@ import java.util.List;
 
 import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
-import com.softlond.bankingApp.repositories.contracts.IRepository;
+import com.softlond.bankingApp.repositories.contracts.ICustomerRepository;
 import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
 import com.softlond.bankingApp.repositories.mappers.CustomerRepositoryMapper;
 
-public class CustomerRepository implements IRepository {
+public class CustomerRepository implements ICustomerRepository {
 	private String connectionString;
 
 	public CustomerRepository() {
@@ -48,11 +48,11 @@ public class CustomerRepository implements IRepository {
 	}
 
 	@Override
-	public Customer save(Object object) throws SQLException {
+	public Customer save(CustomerRepositoryDto object) throws SQLException {
 		CustomerRepositoryMapper customerMapper = new CustomerRepositoryMapper();
-		
-		Customer newCustomer = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) object);
-		
+
+		Customer newCustomer = customerMapper.mapperT1T2WithoutId(object);
+
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
 			if (newCustomer.getFirstName() == null || newCustomer.getFirstName() == ""
@@ -68,19 +68,19 @@ public class CustomerRepository implements IRepository {
 					+ newCustomer.getIdentityNumber() + "','" + newCustomer.getDateOfBirth() + "');";
 			Statement sentencia = connection.createStatement();
 			sentencia.execute(sentenciaSql);
-			return this.find(newCustomer.getIdentityNumber());
+			return this.findByIdentity(newCustomer.getIdentityNumber());
 		} catch (SQLException e) {
-//			System.err.println("Error de conexión: " + e);
+			System.err.println("Error de conexión: " + e);
 			throw e;
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
+			throw e;
 		}
-		return null;
 
 	}
 
 	@Override
-	public List<Customer> list() {
+	public List<Customer> list() throws SQLException {
 		List<Customer> customers = new ArrayList<Customer>();
 
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
@@ -107,20 +107,24 @@ public class CustomerRepository implements IRepository {
 			}
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
+			throw e;
+		} catch (Exception e) {
+			System.err.println("Error " + e.getMessage());
+			throw e;
 		}
 		return null;
 
 	}
 
 	@Override
-	public Customer update(String id, Object old, Object modified) {
+	public Customer update(String id, CustomerRepositoryDto old, CustomerRepositoryDto modified) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-			
+
 			CustomerRepositoryMapper customerMapper = new CustomerRepositoryMapper();
-			
-			Customer oldCustomer = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) old);
-			Customer modifiedCustomer = customerMapper.mapperT1T2WithoutId((CustomerRepositoryDto) modified);
-			
+
+			Customer oldCustomer = customerMapper.mapperT1T2WithoutId(old);
+			Customer modifiedCustomer = customerMapper.mapperT1T2WithoutId(modified);
+
 			String query = "";
 			if (modifiedCustomer.equals(oldCustomer)) {
 				return null;
@@ -156,17 +160,17 @@ public class CustomerRepository implements IRepository {
 				return null;
 			}
 			query = query.substring(0, query.length() - 1);
-			String sqlSentence = "UPDATE customers \n" + "SET " + query + "WHERE id = '" + id
-					+ "';";
+			String sqlSentence = "UPDATE customers \n" + "SET " + query + "WHERE id = '" + id + "';";
 			Statement sentence = connection.createStatement();
 			sentence.execute(sqlSentence);
-			return  this.findById(id);
+			return this.findById(id);
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
+			throw e;
 		} catch (Exception e) {
 			System.err.println("Error " + e.getMessage());
+			throw e;
 		}
-		return null;
 	}
 
 	@Override
@@ -182,41 +186,10 @@ public class CustomerRepository implements IRepository {
 			System.err.println("Error " + e.getMessage());
 		}
 		return false;
-	}
+	}	
 
 	@Override
-	public Customer find(String identifyNumber) {
-		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-			String sqlSentence = "SELECT * FROM customers WHERE identityNumber = ?";
-			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
-			sentence.setString(1, identifyNumber);
-			ResultSet queryResult = sentence.executeQuery();
-
-			if (queryResult == null || !queryResult.next()) {
-				return null;
-			}
-
-			Customer customer = null;
-			String id = queryResult.getString("id");
-			String firstName = queryResult.getString("firstName");
-			String secondName = queryResult.getString("secondName");
-			String firstLastname = queryResult.getString("firstLastname");
-			String secondLastname = queryResult.getString("secondLastname");
-			String identityNumber = queryResult.getString("identityNumber");
-			LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
-
-			customer = new Customer(id, firstName, secondName, firstLastname, secondLastname, identityNumber,
-					dateOfBirth);
-			return customer;
-
-		} catch (SQLException e) {
-			System.err.println("Error de conexión: " + e);
-		}
-		return null;
-	}
-
-	@Override
-	public Customer findById(String id) {
+	public Customer findById(String id) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "SELECT * FROM customers WHERE id = ?";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
@@ -242,8 +215,45 @@ public class CustomerRepository implements IRepository {
 
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
+			throw e;
+		}catch (Exception e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
 		}
-		return null;
+	}
+	
+	@Override
+	public Customer findByIdentity(String identifyNumber) throws SQLException {
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+			String sqlSentence = "SELECT * FROM customers WHERE identityNumber = ?";
+			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
+			sentence.setString(1, identifyNumber);
+			ResultSet queryResult = sentence.executeQuery();
+
+			if (queryResult == null || !queryResult.next()) {
+				return null;
+			}
+
+			Customer customer = null;
+			String id = queryResult.getString("id");
+			String firstName = queryResult.getString("firstName");
+			String secondName = queryResult.getString("secondName");
+			String firstLastname = queryResult.getString("firstLastname");
+			String secondLastname = queryResult.getString("secondLastname");
+			String identityNumber = queryResult.getString("identityNumber");
+			LocalDate dateOfBirth = LocalDate.parse(queryResult.getString("dateOfBirth"));
+
+			customer = new Customer(id, firstName, secondName, firstLastname, secondLastname, identityNumber,
+					dateOfBirth);
+			return customer;
+
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		} catch (Exception e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		}
 	}
 
 }
