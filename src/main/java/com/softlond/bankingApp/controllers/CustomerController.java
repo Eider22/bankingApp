@@ -52,6 +52,22 @@ public class CustomerController extends HttpServlet {
 					response.getWriter().println(json);
 				}
 				break;
+			case "/findByIdentification":
+				String identification = request.getParameter("identification");
+				try {
+					CustomerControllerDto customer = customerService.findByIdentity(identification);
+					String json = mapper.writeValueAsString(customer);
+					response.setContentType("application/json");
+					response.getWriter().println(json);
+				} catch (Exception e) {
+					response.setStatus(404);
+					Map<String, String> error = new HashMap<>();
+					error.put("error", e.getMessage());
+					String json = mapper.writeValueAsString(error);
+					response.setContentType("application/json");
+					response.getWriter().println(json);
+				}
+				break;
 			default:
 				response.setStatus(404);
 				Map<String, String> error = new HashMap<>();

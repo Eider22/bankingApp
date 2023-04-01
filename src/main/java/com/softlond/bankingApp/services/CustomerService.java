@@ -85,8 +85,8 @@ public class CustomerService {
 
 	public CustomerControllerDto findByIdentity(String identityNumber) throws NotFoundCustomerException {
 
-		if (identityNumber == null) {
-			return null;
+		if (identityNumber == null  || identityNumber == "") {
+			throw new NotFoundCustomerException("Debe enviar la identificaión del cliente que desea obtener");
 		}
 
 		Customer customer = this.customerRepository.find(identityNumber);
@@ -101,8 +101,8 @@ public class CustomerService {
 
 	public CustomerControllerDto findById(String id) throws NotFoundCustomerException {
 
-		if (id == null) {
-			return null;
+		if (id == null  || id == "") {
+			throw new NotFoundCustomerException("Debe enviar el id del cliente que desea obtener");
 		}
 
 		Customer customer = this.customerRepository.findById(id);
