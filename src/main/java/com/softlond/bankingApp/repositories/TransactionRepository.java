@@ -39,8 +39,7 @@ public class TransactionRepository implements ITransactionrepository {
 
 			String sql = "CREATE TABLE IF NOT EXISTS transactions(id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ "date DATE NOT NULL,\n" + "hour TIME NOT NULL,\n" + "transactionType TEXT NOT NULL,\n"
-					+ "amount REAL NOT NULL,\n" + "targetAccountType TEXT NULL,\n"
-					+ "accountId INTEGER NOT NULL,\n"
+					+ "amount REAL NOT NULL,\n" + "targetAccountType TEXT NULL,\n" + "accountId INTEGER NOT NULL,\n"
 					+ "CONSTRAINT  fk_accoutn FOREIGN KEY(accountId) REFERENCES accounts(id) ON DELETE CASCADE" + ");";
 
 			Statement sentence = connection.createStatement();
@@ -72,8 +71,6 @@ public class TransactionRepository implements ITransactionrepository {
 
 			Statement sentence = connection.createStatement();
 			sentence.execute(sentenceSql);
-			
-			System.out.println("----->" + newTransaction.getDate());
 
 			return transactionMapper.mapperT2T1WithoutId(newTransaction);
 		} catch (SQLException e) {
@@ -87,7 +84,7 @@ public class TransactionRepository implements ITransactionrepository {
 	}
 
 	@Override
-	public List<Transaction> listByAccountId(Integer idAccount) throws Exception {		
+	public List<Transaction> listByAccountId(Integer idAccount) throws Exception {
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
@@ -124,4 +121,78 @@ public class TransactionRepository implements ITransactionrepository {
 		return transactions;
 
 	}
+
+	public int withdrawalQuantity(String idAccount) throws SQLException {
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+
+			String sqlSentence = "SELECT COUNT(*) FROM transactions  WHERE transactionType = 'Retiro');";
+			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
+			
+			ResultSet queryResult = sentence.executeQuery();
+			
+			int count = 0;
+			if (queryResult.next()) {
+			    count = queryResult.getInt(1);
+			}
+			
+			return count;			
+			
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		} catch (Exception e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		}
+	}
+	
+	public int depositsQuantity(String idAccount) throws SQLException {
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+
+			String sqlSentence = "SELECT COUNT(*) FROM transactions  WHERE transactionType = 'Deposito');";
+			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
+			
+			ResultSet queryResult = sentence.executeQuery();
+			
+			int count = 0;
+			if (queryResult.next()) {
+			    count = queryResult.getInt(1);
+			}
+			
+			return count;			
+			
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		} catch (Exception e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		}
+	}
+	
+	
+	public int transferToSavingsAccount(String idAccount) throws SQLException {
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+
+			String sqlSentence = "SELECT COUNT(*) FROM transactions  WHERE transactionType = 'Transferencia');";
+			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
+			
+			ResultSet queryResult = sentence.executeQuery();
+			
+			int count = 0;
+			if (queryResult.next()) {
+			    count = queryResult.getInt(1);
+			}
+			
+			return count;			
+			
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		} catch (Exception e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		}
+	}
+
 }

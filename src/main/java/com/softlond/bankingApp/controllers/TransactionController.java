@@ -39,19 +39,12 @@ public class TransactionController extends HttpServlet{
 			throws ServletException, IOException {
 		String path = request.getPathInfo();
 		if (path == null) {
-			try {
-				List<?> accounts = this.transactionService.list();
-				String json = mapper.writeValueAsString(accounts);
-				response.setContentType("application/json");
-				response.getWriter().println(json);
-			} catch (Exception e) {
-				response.setStatus(404);
-				Map<String, String> error = new HashMap<>();
-				error.put("error", e.getMessage());
-				String json = mapper.writeValueAsString(error);
-				response.setContentType("application/json");
-				response.getWriter().println(json);
-			}
+			response.setStatus(404);
+			Map<String, String> error = new HashMap<>();
+			error.put("error", "No se encontró el recurso");
+			String json = mapper.writeValueAsString(error);
+			response.setContentType("application/json");
+			response.getWriter().println(json);
 		} else {
 			switch (path) {
 			case "/listByAccountId":
@@ -98,6 +91,7 @@ public class TransactionController extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
 		String content = request.getContentType();
 
 		if (content != null && content.equals("application/json")) {
@@ -126,5 +120,37 @@ public class TransactionController extends HttpServlet{
 			response.setContentType("application/json");
 			response.getWriter().println(json);
 		}
+		
+		
+		
+		
+//		String content = request.getContentType();
+//
+//		if (content != null && content.equals("application/json")) {
+//			Map<String, Object> transactionMap = mapper.readValue(request.getInputStream(), HashMap.class);
+//			try {
+//				TransactionControllerDto savedCustomer = transactionService.save(transactionMap);
+//				response.setStatus(HttpServletResponse.SC_CREATED);
+//				response.setContentType("application/json");
+//				String json = mapper.writeValueAsString(savedCustomer);
+//				response.getWriter().println(json);
+//
+//			} catch (Exception e) {
+//				response.setStatus(HttpServletResponse.SC_CONFLICT);
+//				Map<String, String> error = new HashMap<>();
+//				error.put("error", e.getMessage());
+//				String json = mapper.writeValueAsString(error);
+//				response.setContentType("application/json");
+//				response.getWriter().println(json);
+//			}
+//
+//		} else {
+//			response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+//			Map<String, String> error = new HashMap<>();
+//			error.put("error", "El contenido debe ser JSON");
+//			String json = mapper.writeValueAsString(error);
+//			response.setContentType("application/json");
+//			response.getWriter().println(json);
+//		}
 	}
 }

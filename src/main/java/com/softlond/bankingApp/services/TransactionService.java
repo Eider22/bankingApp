@@ -70,8 +70,6 @@ public class TransactionService implements ITransactionService {
 		LocalDate dateNow = LocalDate.now();
 		LocalTime timeNow = LocalTime.now();
 		
-		System.out.println(dateNow.toString());
-		System.out.println(timeNow.toString());
 
 		TransactionRepositoryDto newTransaction = new TransactionRepositoryDto(dateNow, timeNow, transactionType,
 				amount, originAccountControllerDto.getId(), targetAccountControllerDto.getAccountType());
@@ -82,6 +80,10 @@ public class TransactionService implements ITransactionService {
 
 	@Override
 	public TransactionControllerDto createTransaction(Map transactionMapp) throws Exception {
+		
+		
+		
+		
 		return null;
 		
 	}
@@ -101,6 +103,8 @@ public class TransactionService implements ITransactionService {
 		return this.transactionControllerMapper.MapperT2T1(this.transactionRepositoryMapper.MapperT2T1WithoutId(transactions));
 		
 	}
+	
+	
 
 	@Override
 	public List<TransactionControllerDto> list() throws Exception {
