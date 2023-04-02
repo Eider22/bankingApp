@@ -50,6 +50,23 @@ public class TransactionService implements ITransactionService {
 
 		return this.transactionControllerMapper.mapperT2T1(this.transactionRepository.save(newTransaction));
 	}
+	
+	@Override
+	public List<TransactionControllerDto> listByAccountId(Integer accountId) throws Exception {
+
+		if (accountId == null) {
+			throw new Exception("No envió un id de la cuenta para la busqueda");
+		}
+
+		this.accountService = new AccountService();
+		this.accountService.findById(Integer.toString(accountId));
+
+		List<Transaction> transactions = this.transactionRepository.listByAccountId(accountId);
+
+		return this.transactionControllerMapper
+				.MapperT2T1(this.transactionRepositoryMapper.MapperT2T1WithoutId(transactions));
+
+	}
 
 	@Override
 	public Object withdrawal(Map transactionMapp) throws Exception {
@@ -124,32 +141,14 @@ public class TransactionService implements ITransactionService {
 	}
 
 	public void deposit(Map transactionMapp) {
-
+		// TODO
 	}
 
 	@Override
 	public TransactionControllerDto transfer(Map transactionMapp) throws Exception {
-
+		// TODO
 		return null;
-
-	}
-
-	@Override
-	public List<TransactionControllerDto> listByAccountId(Integer accountId) throws Exception {
-
-		if (accountId == null) {
-			throw new Exception("No envió un id de la cuenta para la busqueda");
-		}
-
-		this.accountService = new AccountService();
-		this.accountService.findById(Integer.toString(accountId));
-
-		List<Transaction> transactions = this.transactionRepository.listByAccountId(accountId);
-
-		return this.transactionControllerMapper
-				.MapperT2T1(this.transactionRepositoryMapper.MapperT2T1WithoutId(transactions));
-
-	}
+	}	
 
 	@Override
 	public List<TransactionControllerDto> list() throws Exception {
