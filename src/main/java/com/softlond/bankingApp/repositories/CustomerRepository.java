@@ -42,7 +42,6 @@ public class CustomerRepository implements ICustomerRepository {
 
 			Statement sentence = connection.createStatement();
 			sentence.execute(sql);
-
 		} catch (SQLException e) {
 			System.out.println("Error de conexión: " + e.getMessage());
 		}
@@ -50,6 +49,7 @@ public class CustomerRepository implements ICustomerRepository {
 
 	@Override
 	public Customer save(CustomerRepositoryDto object) throws SQLException {
+		System.out.println("Entró a save en repository");
 		CustomerRepositoryMapper customerMapper = new CustomerRepositoryMapper();
 
 		Customer newCustomer = customerMapper.mapperT1T2WithoutId(object);

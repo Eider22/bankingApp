@@ -10,11 +10,15 @@ public interface IAccountRepository {
 	public Account save(AccountRepositoryDto accountDto) throws Exception;
 
 	public boolean delete(String id) throws Exception;
+	
+	public boolean deleteByCustomerId(Integer customerId) throws Exception;
 
 	public List<Account> list() throws Exception;
 	
 	public List<Account> listByCustomerId(Integer customerId) throws Exception;
 	
-	public Account findById(String id) throws Exception;
+	public AccountRepositoryDto findById(String id) throws Exception;
+	
+	public Account findByAccountNumber(String accountNumber) throws Exception;
 	
 }

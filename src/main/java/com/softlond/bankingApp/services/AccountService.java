@@ -1,24 +1,19 @@
 package com.softlond.bankingApp.services;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
 import com.softlond.bankingApp.controllers.dtos.AccountControllerDto;
 import com.softlond.bankingApp.controllers.mappers.AccountControllerMapper;
-import com.softlond.bankingApp.controllers.mappers.CustomerControllerMapper;
 import com.softlond.bankingApp.entities.Account;
 import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.exceptions.MissingAtributeException;
 import com.softlond.bankingApp.exceptions.NotFoundCustomerException;
 import com.softlond.bankingApp.repositories.AccountRepository;
-import com.softlond.bankingApp.repositories.CustomerRepository;
 import com.softlond.bankingApp.repositories.contracts.IAccountRepository;
 import com.softlond.bankingApp.repositories.dtos.AccountRepositoryDto;
 import com.softlond.bankingApp.repositories.mappers.AccountRepositoryMapper;
-import com.softlond.bankingApp.repositories.mappers.CustomerRepositoryMapper;
 import com.softlond.bankingApp.services.contracts.IAccountService;
 import com.softlond.bankingApp.services.contracts.ICustomerService;
 
@@ -31,7 +26,6 @@ public class AccountService implements IAccountService {
 	
 	public AccountService() {
 		this.accountRepository = new AccountRepository();
-		this.customerService = new CustomerService();
 		this.accountRepositoryMapper = new AccountRepositoryMapper();
 		this.accountControllerMapper = new AccountControllerMapper();
 	}
@@ -62,6 +56,7 @@ public class AccountService implements IAccountService {
 				throw new Exception("Tipo de cuenta inválido");				
 			}
 
+			this.customerService = new CustomerService();
 			this.customerService.findById(customerId);
 
 			AccountRepositoryDto newAccount = new AccountRepositoryDto(accountNumber, 0, customerId, accountType);
@@ -100,7 +95,8 @@ public class AccountService implements IAccountService {
 			throw new Exception("No envió un id de cliente para la busqueda");
 		}
 		
-//		this.customerService.findById(customerId);
+		this.customerService = new CustomerService();
+		this.customerService.findById(customerId);
 
 		List<Account> accounts = this.accountRepository.listByCustomerId(customerId);
 		return this.accountControllerMapper.MapperT2T1(this.accountRepositoryMapper.MapperT2T1(accounts));
@@ -108,8 +104,17 @@ public class AccountService implements IAccountService {
 
 	@Override
 	public AccountControllerDto findById(String id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (id == null) {
+			throw new NotFoundCustomerException("Debe enviar el id de la cuenta que desea obtener");
+		}
+
+		AccountRepositoryDto account = this.accountRepository.findById(id);
+
+		if (account == null) {
+			throw new NotFoundCustomerException("No se encontró el cliente con el id indicado");
+		}
+
+		return this.accountControllerMapper.mapperT2T1(account);
 	}
 
 	@Override
@@ -122,6 +127,35 @@ public class AccountService implements IAccountService {
 	public AccountControllerDto update(String id, Map accountMap) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean deleteByCustomerId(Integer customerId) throws Exception {
+
+		if (customerId == null) {
+			throw new NotFoundCustomerException("Debe enviar el id del cliente que desea eliminar");
+		}
+
+		boolean ok = this.accountRepository.deleteByCustomerId(customerId);
+		if (!ok) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public AccountControllerDto findByIdAccountNumber(String accountNumber) throws Exception {
+		if (accountNumber == null || accountNumber == "") {
+			throw new NotFoundCustomerException("Debe enviar el número de la cuenta que desea obtener");
+		}
+
+		Account account = this.accountRepository.findByAccountNumber(accountNumber);
+
+		if (account == null) {
+			throw new NotFoundCustomerException("No se encontró la cuenta con el número de cuenta indicado");
+		}
+
+		return this.accountControllerMapper.mapperT2T1(this.accountRepositoryMapper.mapperT2T1(account));
 	}
 
 }

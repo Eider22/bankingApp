@@ -11,20 +11,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softlond.bankingApp.controllers.dtos.AccountControllerDto;
 import com.softlond.bankingApp.controllers.dtos.CustomerControllerDto;
-import com.softlond.bankingApp.services.AccountService;
+import com.softlond.bankingApp.controllers.dtos.TransactionControllerDto;
 import com.softlond.bankingApp.services.CustomerService;
-import com.softlond.bankingApp.services.contracts.IAccountService;
+import com.softlond.bankingApp.services.TransactionService;
+import com.softlond.bankingApp.services.contracts.ICustomerService;
+import com.softlond.bankingApp.services.contracts.ITransactionService;
 
-public class AccountController extends HttpServlet {
-	private IAccountService accountService;
+public class TransactionController extends HttpServlet{
+	
+	private ITransactionService transactionService;
 	private ObjectMapper mapper;
 
-	public AccountController() {
-		this.accountService = new AccountService();
-		this.mapper = new ObjectMapper();
+	public TransactionController() {
+		this.transactionService = new TransactionService();
+		mapper = new ObjectMapper();
 	}
+	
+	
+	
+	
+	
+	
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,7 +40,7 @@ public class AccountController extends HttpServlet {
 		String path = request.getPathInfo();
 		if (path == null) {
 			try {
-				List<?> accounts = this.accountService.list();
+				List<?> accounts = this.transactionService.list();
 				String json = mapper.writeValueAsString(accounts);
 				response.setContentType("application/json");
 				response.getWriter().println(json);
@@ -46,11 +54,11 @@ public class AccountController extends HttpServlet {
 			}
 		} else {
 			switch (path) {
-			case "/listByCustomerId":
+			case "/listByAccountId":
 				Integer id = Integer.parseInt(request.getParameter("id"));
 				try {
-					List<?> accounts = this.accountService.listByCustomerId(id);
-					String json = mapper.writeValueAsString(accounts);
+					List<?> transactions = this.transactionService.listByAccountId(id);
+					String json = mapper.writeValueAsString(transactions);
 					response.setContentType("application/json");
 					response.getWriter().println(json);
 				} catch (Exception e) {
@@ -86,19 +94,19 @@ public class AccountController extends HttpServlet {
 	
 	
 	
-
+	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String content = request.getContentType();
 
 		if (content != null && content.equals("application/json")) {
-			Map<String, Object> accountMapp = mapper.readValue(request.getInputStream(), HashMap.class);
+			Map<String, Object> transactionMap = mapper.readValue(request.getInputStream(), HashMap.class);
 			try {
-				AccountControllerDto savedAccount = accountService.save(accountMapp);
+				TransactionControllerDto savedCustomer = transactionService.save(transactionMap);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				response.setContentType("application/json");
-				String json = mapper.writeValueAsString(savedAccount);
+				String json = mapper.writeValueAsString(savedCustomer);
 				response.getWriter().println(json);
 
 			} catch (Exception e) {
@@ -119,5 +127,4 @@ public class AccountController extends HttpServlet {
 			response.getWriter().println(json);
 		}
 	}
-
 }

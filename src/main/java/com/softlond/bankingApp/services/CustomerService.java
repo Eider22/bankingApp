@@ -15,12 +15,14 @@ import com.softlond.bankingApp.repositories.CustomerRepository;
 import com.softlond.bankingApp.repositories.contracts.ICustomerRepository;
 import com.softlond.bankingApp.repositories.dtos.CustomerRepositoryDto;
 import com.softlond.bankingApp.repositories.mappers.CustomerRepositoryMapper;
+import com.softlond.bankingApp.services.contracts.IAccountService;
 import com.softlond.bankingApp.services.contracts.ICustomerService;
 
-public class CustomerService implements ICustomerService{
+public class CustomerService implements ICustomerService {
 	private ICustomerRepository customerRepository;
 	private CustomerRepositoryMapper customerRepositoryMapper;
 	private CustomerControllerMapper customerControllerMapper;
+	private IAccountService accountService;
 
 	public CustomerService() {
 		this.customerRepository = new CustomerRepository();
@@ -30,7 +32,6 @@ public class CustomerService implements ICustomerService{
 
 	public CustomerControllerDto save(Map customerMap)
 			throws DateTimeParseException, MissingAtributeException, Exception {
-
 		try {
 			String firstName = (String) customerMap.get("firstName");
 			String secondName = (String) customerMap.get("secondName");
@@ -87,7 +88,7 @@ public class CustomerService implements ICustomerService{
 
 	public CustomerControllerDto findByIdentity(String identityNumber) throws Exception {
 
-		if (identityNumber == null  || identityNumber == "") {
+		if (identityNumber == null || identityNumber == "") {
 			throw new NotFoundCustomerException("Debe enviar la identificaión del cliente que desea obtener");
 		}
 
@@ -127,6 +128,11 @@ public class CustomerService implements ICustomerService{
 
 		if (customer == null) {
 			throw new NotFoundCustomerException("No se encontró el cliente con el id indicado");
+		}
+
+		this.accountService = new AccountService();
+		if (!this.accountService.deleteByCustomerId(id)) {
+			throw new NotFoundCustomerException("No se pudieron eliminar las cuentas asociadas a este cliente");
 		}
 
 		boolean ok = this.customerRepository.delete(id);

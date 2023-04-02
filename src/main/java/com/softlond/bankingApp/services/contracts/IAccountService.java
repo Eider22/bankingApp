@@ -15,8 +15,12 @@ public interface IAccountService {
 	public List<AccountControllerDto> listByCustomerId(Integer customerId) throws Exception;
 
 	public AccountControllerDto findById(String id) throws Exception;
+	
+	public AccountControllerDto findByIdAccountNumber(String accountNumber) throws Exception;
 
 	public boolean delete(String id) throws Exception;
+	
+	public boolean deleteByCustomerId(Integer customerId) throws Exception;
 
 	public AccountControllerDto update(String id, Map accountMap) throws Exception;
 }

@@ -6,20 +6,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.softlond.bankingApp.entities.Account;
+import com.softlond.bankingApp.entities.Customer;
 import com.softlond.bankingApp.repositories.contracts.IAccountRepository;
 import com.softlond.bankingApp.repositories.dtos.AccountRepositoryDto;
 import com.softlond.bankingApp.repositories.mappers.AccountRepositoryMapper;
 
 public class AccountRepository implements IAccountRepository {
 	private String connectionString;
+	private AccountRepositoryMapper accountrepositoryMapper;
 
 	public AccountRepository() {
+		this.accountrepositoryMapper = new AccountRepositoryMapper();
 		try {
-//			DriverManager.registerDriver(new org.sqlite.JDBC());
+			DriverManager.registerDriver(new org.sqlite.JDBC());
 			this.connectionString = "jdbc:sqlite:bankingDB.db";
 
 			createTable();
@@ -32,10 +36,10 @@ public class AccountRepository implements IAccountRepository {
 	private void createTable() {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
-			String sql = "CREATE TABLE IF NOT EXISTS accounts(ID INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+			String sql = "CREATE TABLE IF NOT EXISTS accounts(id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ "accountNumber TEXT NOT NULL UNIQUE,\n" + "balance REAL NOT NULL,\n"
-					+ "accountType TEXT NOT NULL,\n" + "customerId INTEGER NOT NULL"
-//					+ "CONSTRAINT  fk_customer FOREIGN KEY(customerId) REFERENCES customers(id) ON DELETE CASCADE"
+					+ "accountType TEXT NOT NULL,\n" + "customerId INTEGER NOT NULL,\n"
+					+ "CONSTRAINT  fk_customer FOREIGN KEY(customerId) REFERENCES customers(id) ON DELETE CASCADE"
 					+ ");";
 
 			Statement sentence = connection.createStatement();
@@ -65,18 +69,7 @@ public class AccountRepository implements IAccountRepository {
 
 			Statement sentence = connection.createStatement();
 			sentence.execute(sentenceSql);
-
-			Statement stmt = connection.createStatement();
-			String configureFk = "PRAGMA foreign_keys=off;\n" + "ALTER TABLE accounts RENAME TO _accounts_old;\n"
-					+ "CREATE TABLE accounts(ID INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-					+ "accountNumber TEXT NOT NULL UNIQUE,\n" + "balance REAL NOT NULL,\n"
-					+ "accountType TEXT NOT NULL,\n" + "customerId INTEGER NOT NULL,\n"
-					+ "CONSTRAINT  fk_customer FOREIGN KEY(customerId) REFERENCES customers(id) ON DELETE CASCADE);\n"
-					+ "INSERT INTO accounts SELECT * FROM _accounts_old);\n"
-					+ "INSERT INTO accounts SELECT * FROM _accounts_old;\n" 
-					+ "COMMIT;\n" + "PRAGMA foreign_keys=on;";
-
-			stmt.execute(configureFk);
+			
 			return findByAccountNumber(newAccount.getAccountNumber());
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
@@ -308,8 +301,80 @@ public class AccountRepository implements IAccountRepository {
 	}
 
 	@Override
-	public Account findById(String id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public AccountRepositoryDto findById(String id) throws Exception {
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+			String sqlSentence = "SELECT * FROM accounts WHERE id = ?";
+			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
+			sentence.setString(1, id);
+			ResultSet queryResult = sentence.executeQuery();
+
+			if (queryResult == null || !queryResult.next()) {
+				return null;
+			}
+
+			Account account = null;
+			String iD = queryResult.getString("id");
+			String accountNumber = queryResult.getString("accountNumber");
+			double balance = queryResult.getDouble("balance");
+			int customer = queryResult.getInt("customerId");
+			String accountType = queryResult.getString("accountType");
+
+			account = new Account(iD, accountNumber, balance, customer, accountType);
+			
+			return this.accountrepositoryMapper.mapperT2T1(account);
+
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		} catch (Exception e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		}
 	}
+
+	@Override
+	public boolean deleteByCustomerId(Integer customerId) throws Exception {		
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+			String sqlSentence = "DELETE FROM accounts WHERE customerId = '" + customerId + "';";
+			Statement sentence = connection.createStatement();
+			sentence.execute(sqlSentence);
+			return true;
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+		} catch (Exception e) {
+			System.err.println("Error " + e.getMessage());
+		}
+		return false;
+	}
+
+//	@Override
+//	public Account findByAccountNumber(String accountNum) throws Exception {
+//		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+//			String sqlSentence = "SELECT * FROM customers WHERE identityNumber = ?";
+//			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
+//			sentence.setString(1, accountNum);
+//			ResultSet queryResult = sentence.executeQuery();
+//
+//			if (queryResult == null || !queryResult.next()) {
+//				return null;
+//			}
+//
+//			Account account = null;
+//			String id = queryResult.getString("id");
+//			String accountNumber = queryResult.getString("accountNumber");
+//			double balance = Double.parseDouble(queryResult.getString("balance"));
+//			String accountType = queryResult.getString("accountType");
+//			Integer customerId = Integer.parseInt(queryResult.getString("customerId"));
+//
+//			account = new Account(accountNumber, 0, null, accountType);
+//			return account;
+//
+//		} catch (SQLException e) {
+//			System.err.println("Error de conexión: " + e);
+//			throw e;
+//		} catch (Exception e) {
+//			System.err.println("Error de conexión: " + e);
+//			throw e;
+//		}
+//	}
 }
