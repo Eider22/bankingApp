@@ -23,7 +23,7 @@ public class AccountService implements IAccountService {
 	private ICustomerService customerService;
 	private AccountRepositoryMapper accountRepositoryMapper;
 	private AccountControllerMapper accountControllerMapper;
-	
+
 	public AccountService() {
 		this.accountRepository = new AccountRepository();
 		this.accountRepositoryMapper = new AccountRepositoryMapper();
@@ -47,34 +47,34 @@ public class AccountService implements IAccountService {
 			if (customerId == null) {
 				throw new MissingAtributeException("Falta atributo requerido - customerId");
 			}
-			
-			if(accountType.equals("1")) {
+
+			if (accountType.equals("1")) {
 				accountType = "Ahorros";
-			}else if(accountType.equals("2")) {
-				accountType = "Corriente";				
-			}else {
-				throw new Exception("Tipo de cuenta inválido");				
+			} else if (accountType.equals("2")) {
+				accountType = "Corriente";
+			} else {
+				throw new Exception("Tipo de cuenta inválido");
 			}
 
 			this.customerService = new CustomerService();
 			this.customerService.findById(customerId);
 
-			AccountRepositoryDto newAccount = new AccountRepositoryDto(accountNumber, 0, customerId, accountType);
+			AccountRepositoryDto newAccount = new AccountRepositoryDto(accountNumber, 100000, customerId, accountType);
 
 			Account account = this.accountRepository.save(newAccount);
 
 			if (account == null) {
 				throw new Exception("No fue posible crear la cuenta");
 			}
-			
+
 			return this.accountControllerMapper.mapperT2T1(this.accountRepositoryMapper.mapperT2T1(account));
 
 		} catch (SQLException e) {
 			if (e.getErrorCode() == 19) {
-			throw new Exception("No fue posible crear la cuenta, ya existe una cuenta con este número de cuenta");
+				throw new Exception("No fue posible crear la cuenta, ya existe una cuenta con este número de cuenta");
 			}
 			throw new Exception("No fue posible crear la cuenta");
-		} 
+		}
 	}
 
 	@Override
@@ -91,10 +91,10 @@ public class AccountService implements IAccountService {
 
 	@Override
 	public List<AccountControllerDto> listByCustomerId(Integer customerId) throws Exception {
-		if(customerId == null) {
+		if (customerId == null) {
 			throw new Exception("No envió un id de cliente para la busqueda");
 		}
-		
+
 		this.customerService = new CustomerService();
 		this.customerService.findById(customerId);
 
@@ -156,6 +156,18 @@ public class AccountService implements IAccountService {
 		}
 
 		return this.accountControllerMapper.mapperT2T1(this.accountRepositoryMapper.mapperT2T1(account));
+	}
+
+	@Override
+	public boolean updateBalance(String accountId, Double balance) throws SQLException {
+		if (accountId == null || accountId == "") {
+			return false;
+		}
+
+		if (balance == null) {
+			return false;
+		}
+		return this.accountRepository.updateBalance(accountId, balance);
 	}
 
 }

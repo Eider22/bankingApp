@@ -122,21 +122,24 @@ public class TransactionRepository implements ITransactionrepository {
 
 	}
 
+	@Override
 	public int withdrawalQuantity(String idAccount) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
-			String sqlSentence = "SELECT COUNT(*) FROM transactions  WHERE transactionType = 'Retiro');";
+			String sqlSentence = "SELECT COUNT(*) FROM transactions  WHERE transactionType = 'Retiro' AND accountId = "
+					+ idAccount + ";";
+
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
-			
+
 			ResultSet queryResult = sentence.executeQuery();
-			
+
 			int count = 0;
 			if (queryResult.next()) {
-			    count = queryResult.getInt(1);
+				count = queryResult.getInt(1);
 			}
-			
-			return count;			
-			
+
+			return count;
+
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 			throw e;
@@ -145,22 +148,22 @@ public class TransactionRepository implements ITransactionrepository {
 			throw e;
 		}
 	}
-	
+
 	public int depositsQuantity(String idAccount) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
 			String sqlSentence = "SELECT COUNT(*) FROM transactions  WHERE transactionType = 'Deposito');";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
-			
+
 			ResultSet queryResult = sentence.executeQuery();
-			
+
 			int count = 0;
 			if (queryResult.next()) {
-			    count = queryResult.getInt(1);
+				count = queryResult.getInt(1);
 			}
-			
-			return count;			
-			
+
+			return count;
+
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 			throw e;
@@ -169,23 +172,22 @@ public class TransactionRepository implements ITransactionrepository {
 			throw e;
 		}
 	}
-	
-	
+
 	public int transferToSavingsAccount(String idAccount) throws SQLException {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 
 			String sqlSentence = "SELECT COUNT(*) FROM transactions  WHERE transactionType = 'Transferencia');";
 			PreparedStatement sentence = connection.prepareStatement(sqlSentence);
-			
+
 			ResultSet queryResult = sentence.executeQuery();
-			
+
 			int count = 0;
 			if (queryResult.next()) {
-			    count = queryResult.getInt(1);
+				count = queryResult.getInt(1);
 			}
-			
-			return count;			
-			
+
+			return count;
+
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
 			throw e;

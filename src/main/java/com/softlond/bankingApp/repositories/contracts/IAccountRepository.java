@@ -1,5 +1,6 @@
 package com.softlond.bankingApp.repositories.contracts;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.softlond.bankingApp.entities.Account;
@@ -20,5 +21,7 @@ public interface IAccountRepository {
 	public AccountRepositoryDto findById(String id) throws Exception;
 	
 	public Account findByAccountNumber(String accountNumber) throws Exception;
+
+	boolean updateBalance(String id, Double balance) throws SQLException;
 	
 }

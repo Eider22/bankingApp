@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softlond.bankingApp.controllers.dtos.CustomerControllerDto;
 import com.softlond.bankingApp.controllers.dtos.TransactionControllerDto;
 import com.softlond.bankingApp.services.CustomerService;
+import com.softlond.bankingApp.services.ServiceCustomResponse;
 import com.softlond.bankingApp.services.TransactionService;
 import com.softlond.bankingApp.services.contracts.ICustomerService;
 import com.softlond.bankingApp.services.contracts.ITransactionService;
@@ -97,10 +98,10 @@ public class TransactionController extends HttpServlet{
 		if (content != null && content.equals("application/json")) {
 			Map<String, Object> transactionMap = mapper.readValue(request.getInputStream(), HashMap.class);
 			try {
-				TransactionControllerDto savedCustomer = transactionService.save(transactionMap);
+				ServiceCustomResponse res = (ServiceCustomResponse) transactionService.withdrawal(transactionMap);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				response.setContentType("application/json");
-				String json = mapper.writeValueAsString(savedCustomer);
+				String json = mapper.writeValueAsString(res.getMessage());
 				response.getWriter().println(json);
 
 			} catch (Exception e) {

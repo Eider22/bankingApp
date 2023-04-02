@@ -1,5 +1,6 @@
 package com.softlond.bankingApp.services.contracts;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,4 +24,6 @@ public interface IAccountService {
 	public boolean deleteByCustomerId(Integer customerId) throws Exception;
 
 	public AccountControllerDto update(String id, Map accountMap) throws Exception;
+
+	boolean updateBalance(String accountId, Double balance) throws Exception;
 }

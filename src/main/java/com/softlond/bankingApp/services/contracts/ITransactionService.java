@@ -6,12 +6,16 @@ import java.util.Map;
 import com.softlond.bankingApp.controllers.dtos.TransactionControllerDto;
 
 public interface ITransactionService {
-	public TransactionControllerDto save(Map transactionMapp) throws Exception;
 
-	public TransactionControllerDto createTransaction(Map transactionMapp) throws Exception;
+	public TransactionControllerDto transfer(Map transactionMapp) throws Exception;
 
 	public List<TransactionControllerDto> listByAccountId(Integer accountId) throws Exception;
 	
 	public List<TransactionControllerDto> list() throws Exception;
+
+	TransactionControllerDto save(String transactionType, Double amount, String accountId, String accountTargetType)
+			throws Exception;
+
+	Object withdrawal(Map transactionMapp) throws Exception;
 
 }

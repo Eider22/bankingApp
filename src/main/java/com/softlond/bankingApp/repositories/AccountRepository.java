@@ -69,7 +69,7 @@ public class AccountRepository implements IAccountRepository {
 
 			Statement sentence = connection.createStatement();
 			sentence.execute(sentenceSql);
-			
+
 			return findByAccountNumber(newAccount.getAccountNumber());
 		} catch (SQLException e) {
 			System.err.println("Error de conexión: " + e);
@@ -118,62 +118,31 @@ public class AccountRepository implements IAccountRepository {
 //
 //	}
 //
-//	@Override
-//	public Account update(String id, AccountRepositoryDto old, AccountRepositoryDto modified) throws SQLException {
-//		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
-//
-//			AccountRepositoryMapper accountMapper = new AccountRepositoryMapper();
-//
-//			Account oldAccount = accountMapper.mapperT1T2WithoutId(old);
-//			Account modifiedAccount = accountMapper.mapperT1T2WithoutId(modified);
-//
-//			String query = "";
-//			if (modifiedAccount.equals(oldAccount)) {
-//				return null;
-//			}
-//			if (modifiedAccount.getFirstName() != null
-//					&& !modifiedAccount.getFirstName().equals(oldAccount.getFirstName())) {
-//				query += "firstName = '" + modifiedAccount.getFirstName() + "',";
-//			}
-//
-//			if (modifiedAccount.getSecondName() == null || oldAccount.getSecondName() == null) {
-//				query += "secondName = '" + modifiedAccount.getSecondName() + "',";
-//			} else if (!(modifiedAccount.getSecondName() == null || oldAccount.getSecondName() == null)
-//					&& !modifiedAccount.getSecondName().equals(oldAccount.getSecondName())) {
-//				query += "secondName = '" + modifiedAccount.getSecondName() + "',";
-//			}
-//
-//			if (modifiedAccount.getFirstLastname() != null
-//					&& !(modifiedAccount.getFirstLastname().equals(oldAccount.getFirstLastname()))) {
-//				query += "firstLastname = '" + modifiedAccount.getFirstLastname() + "',";
-//			}
-//
-//			if (modifiedAccount.getSecondLastname() == null || oldAccount.getSecondLastname() == null) {
-//				query += "secondLastname = '" + modifiedAccount.getSecondLastname() + "',";
-//			} else if (!modifiedAccount.getSecondLastname().equals(oldAccount.getSecondLastname())) {
-//				query += "secondLastname = '" + modifiedAccount.getSecondLastname() + "',";
-//			}
-//			if (modifiedAccount.getDateOfBirth() != null
-//					&& !modifiedAccount.getDateOfBirth().equals(oldAccount.getDateOfBirth())) {
-//				query += "dateOfBirth = '" + modifiedAccount.getDateOfBirth() + "',";
-//			}
-//
-//			if (query.length() == 0) {
-//				return null;
-//			}
-//			query = query.substring(0, query.length() - 1);
-//			String sqlSentence = "UPDATE accounts \n" + "SET " + query + "WHERE id = '" + id + "';";
-//			Statement sentence = connection.createStatement();
-//			sentence.execute(sqlSentence);
-//			return this.findById(id);
-//		} catch (SQLException e) {
-//			System.err.println("Error de conexión: " + e);
-//			throw e;
-//		} catch (Exception e) {
-//			System.err.println("Error " + e.getMessage());
-//			throw e;
-//		}
-//	}
+	@Override
+	public boolean updateBalance(String id, Double balance) throws SQLException {
+		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
+
+			AccountRepositoryMapper accountMapper = new AccountRepositoryMapper();
+
+			if (id == null || id == "") {
+				return false;
+			}
+
+			if (balance == null) {
+				return false;
+			}
+			String sqlSentence = "UPDATE accounts SET balance = + '" + balance + "' WHERE id = '" + id + "';";
+			Statement sentence = connection.createStatement();
+			sentence.execute(sqlSentence);
+			return true;
+		} catch (SQLException e) {
+			System.err.println("Error de conexión: " + e);
+			throw e;
+		} catch (Exception e) {
+			System.err.println("Error " + e.getMessage());
+			throw e;
+		}
+	}
 //
 //	@Override
 //	public boolean delete(String id) {
@@ -320,7 +289,7 @@ public class AccountRepository implements IAccountRepository {
 			String accountType = queryResult.getString("accountType");
 
 			account = new Account(iD, accountNumber, balance, customer, accountType);
-			
+
 			return this.accountrepositoryMapper.mapperT2T1(account);
 
 		} catch (SQLException e) {
@@ -333,7 +302,7 @@ public class AccountRepository implements IAccountRepository {
 	}
 
 	@Override
-	public boolean deleteByCustomerId(Integer customerId) throws Exception {		
+	public boolean deleteByCustomerId(Integer customerId) throws Exception {
 		try (Connection connection = DriverManager.getConnection(this.connectionString)) {
 			String sqlSentence = "DELETE FROM accounts WHERE customerId = '" + customerId + "';";
 			Statement sentence = connection.createStatement();
