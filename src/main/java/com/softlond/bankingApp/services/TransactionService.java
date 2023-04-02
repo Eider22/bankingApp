@@ -30,60 +30,6 @@ public class TransactionService implements ITransactionService {
 		this.transactionRepositoryMapper = new TransactionRepositoryMapper();
 	}
 
-//	@Override
-//	public TransactionControllerDto save(Map transactionMapp) throws Exception {
-//
-//		if (transactionMapp.get("numberOriginAccount") == null || transactionMapp.get("numberOriginAccount") == "") {
-//			throw new MissingAtributeException("Falta atributo requerido - numberOriginAccount");
-//		}
-//		if (transactionMapp.get("numberTargetAccount") == null || transactionMapp.get("numberTargetAccount") == "") {
-//			throw new MissingAtributeException("Falta atributo requerido - numberTargetAccount");
-//		}
-//		if (transactionMapp.get("amount") == null || transactionMapp.get("amount") == "") {
-//			throw new MissingAtributeException("Falta atributo requerido - amount");
-//		}
-//		if (transactionMapp.get("transactionType") == null || transactionMapp.get("transactionType") == "") {
-//			throw new MissingAtributeException("Falta atributo requerido - transactionType");
-//		}
-//
-//		String numberOriginAccount = (String) transactionMapp.get("numberOriginAccount");
-//		String numberTargetAccount = (String) transactionMapp.get("numberTargetAccount");
-//		Double amount = ((Integer) transactionMapp.get("amount")).doubleValue();
-//		String transactionType = (String) transactionMapp.get("transactionType");
-//
-//		this.accountService = new AccountService();
-//
-//		AccountControllerDto originAccountControllerDto = this.accountService
-//				.findByIdAccountNumber(numberOriginAccount);
-//		AccountControllerDto targetAccountControllerDto = this.accountService
-//				.findByIdAccountNumber(numberTargetAccount);
-//
-//		if (transactionType.equals("1")) {
-//			transactionType = "Deposito";
-//		} else if (transactionType.equals("2")) {
-//			transactionType = "Retiro";
-//		} else if (transactionType.equals("3")) {
-//			transactionType = "Transferencia";
-//		} else {
-//			throw new Exception("Tipo de transacción inválida");
-//		}
-//
-//		LocalDate dateNow = LocalDate.now();
-//		LocalTime timeNow = LocalTime.now();
-//
-//		TransactionRepositoryDto newTransaction = new TransactionRepositoryDto(dateNow, timeNow, transactionType,
-//				amount, originAccountControllerDto.getId(), targetAccountControllerDto.getAccountType());
-//
-//		return this.transactionControllerMapper.mapperT2T1(this.transactionRepository.save(newTransaction));
-//	}
-//
-//	@Override
-//	public TransactionControllerDto transfer(Map transactionMapp) throws Exception {
-//
-//		return null;
-//
-//	}
-
 	@Override
 	public TransactionControllerDto save(String transactionType, Double amount, String accountId,
 			String accountTargetType) throws Exception {
@@ -107,31 +53,30 @@ public class TransactionService implements ITransactionService {
 
 	@Override
 	public Object withdrawal(Map transactionMapp) throws Exception {
-		
+
 		if (transactionMapp.get("numberAccount") == null || transactionMapp.get("numberAccount") == "") {
 			throw new MissingAtributeException("Falta atributo requerido - numberAccount");
 		}
-		
+
 		if (transactionMapp.get("amount") == null || transactionMapp.get("amount") == "") {
 			throw new MissingAtributeException("Falta atributo requerido - amount");
 		}
 
 		String numberAccount = (String) transactionMapp.get("numberAccount");
-		
-		Double amount = Double.parseDouble((String)transactionMapp.get("amount"));
+
+		Double amount = Double.parseDouble((String) transactionMapp.get("amount"));
 
 		this.accountService = new AccountService();
 		AccountControllerDto accountControllerDto = this.accountService.findByIdAccountNumber(numberAccount);
-		
 
 		if (accountControllerDto.getBalance() < amount) {
-			ServiceCustomResponse response = new ServiceCustomResponse("Cuanta con fondos insuficientes");
+			ServiceCustomResponse response = new ServiceCustomResponse("Cuenta con fondos insuficientes");
 			return response;
 		}
 
 		if (accountControllerDto.getAccountType().equals("Ahorros")) {
 			this.withdrawalSavingsAccount(accountControllerDto, amount);
-			
+
 			this.accountService = new AccountService();
 			if (!this.accountService.updateBalance(accountControllerDto.getId(), accountControllerDto.getBalance())) {
 				throw new Exception("Problema al actualizar la cuenta");

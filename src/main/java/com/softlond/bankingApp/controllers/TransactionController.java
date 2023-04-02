@@ -19,8 +19,8 @@ import com.softlond.bankingApp.services.TransactionService;
 import com.softlond.bankingApp.services.contracts.ICustomerService;
 import com.softlond.bankingApp.services.contracts.ITransactionService;
 
-public class TransactionController extends HttpServlet{
-	
+public class TransactionController extends HttpServlet {
+
 	private ITransactionService transactionService;
 	private ObjectMapper mapper;
 
@@ -28,13 +28,7 @@ public class TransactionController extends HttpServlet{
 		this.transactionService = new TransactionService();
 		mapper = new ObjectMapper();
 	}
-	
-	
-	
-	
-	
-	
-	
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -77,81 +71,64 @@ public class TransactionController extends HttpServlet{
 		}
 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		String content = request.getContentType();
 
-		if (content != null && content.equals("application/json")) {
-			Map<String, Object> transactionMap = mapper.readValue(request.getInputStream(), HashMap.class);
-			try {
-				ServiceCustomResponse res = (ServiceCustomResponse) transactionService.withdrawal(transactionMap);
-				response.setStatus(HttpServletResponse.SC_CREATED);
-				response.setContentType("application/json");
-				String json = mapper.writeValueAsString(res.getMessage());
-				response.getWriter().println(json);
+		String path = request.getPathInfo();
 
-			} catch (Exception e) {
-				response.setStatus(HttpServletResponse.SC_CONFLICT);
-				Map<String, String> error = new HashMap<>();
-				error.put("error", e.getMessage());
-				String json = mapper.writeValueAsString(error);
-				response.setContentType("application/json");
-				response.getWriter().println(json);
-			}
-
-		} else {
-			response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+		if (path == null) {
+			response.setStatus(404);
 			Map<String, String> error = new HashMap<>();
-			error.put("error", "El contenido debe ser JSON");
+			error.put("error", "No se encontró el recurso");
 			String json = mapper.writeValueAsString(error);
 			response.setContentType("application/json");
 			response.getWriter().println(json);
+		} else {
+			switch (path) {
+			case "/withdrawal":
+				String content = request.getContentType();
+				if (content != null && content.equals("application/json")) {
+					Map<String, Object> transactionMap = mapper.readValue(request.getInputStream(), HashMap.class);
+					try {
+						ServiceCustomResponse res = (ServiceCustomResponse) transactionService
+								.withdrawal(transactionMap);
+						response.setStatus(HttpServletResponse.SC_CREATED);
+						response.setContentType("application/json");
+						String json = mapper.writeValueAsString(res.getMessage());
+						response.getWriter().println(json);
+
+					} catch (Exception e) {
+						response.setStatus(HttpServletResponse.SC_CONFLICT);
+						Map<String, String> error = new HashMap<>();
+						error.put("error", e.getMessage());
+						String json = mapper.writeValueAsString(error);
+						response.setContentType("application/json");
+						response.getWriter().println(json);
+					}
+
+				} else {
+					response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+					Map<String, String> error = new HashMap<>();
+					error.put("error", "El contenido debe ser JSON");
+					String json = mapper.writeValueAsString(error);
+					response.setContentType("application/json");
+					response.getWriter().println(json);
+				}
+
+				break;
+			default:
+				response.setStatus(404);
+				Map<String, String> error = new HashMap<>();
+				error.put("error", "No se encontro el recurso");
+				String json = mapper.writeValueAsString(error);
+				response.setContentType("application/json");
+				response.getWriter().println(json);
+				break;
+			}
+
 		}
-		
-		
-		
-		
-//		String content = request.getContentType();
-//
-//		if (content != null && content.equals("application/json")) {
-//			Map<String, Object> transactionMap = mapper.readValue(request.getInputStream(), HashMap.class);
-//			try {
-//				TransactionControllerDto savedCustomer = transactionService.save(transactionMap);
-//				response.setStatus(HttpServletResponse.SC_CREATED);
-//				response.setContentType("application/json");
-//				String json = mapper.writeValueAsString(savedCustomer);
-//				response.getWriter().println(json);
-//
-//			} catch (Exception e) {
-//				response.setStatus(HttpServletResponse.SC_CONFLICT);
-//				Map<String, String> error = new HashMap<>();
-//				error.put("error", e.getMessage());
-//				String json = mapper.writeValueAsString(error);
-//				response.setContentType("application/json");
-//				response.getWriter().println(json);
-//			}
-//
-//		} else {
-//			response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-//			Map<String, String> error = new HashMap<>();
-//			error.put("error", "El contenido debe ser JSON");
-//			String json = mapper.writeValueAsString(error);
-//			response.setContentType("application/json");
-//			response.getWriter().println(json);
-//		}
+
 	}
 }
